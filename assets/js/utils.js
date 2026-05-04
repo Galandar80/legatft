@@ -31,32 +31,56 @@ document.addEventListener('DOMContentLoaded', function () {
     if (footerElements.length > 0) {
         const footerHTML = `
         <div class="container">
-            <div class="footer-content">
-                <div class="footer-info">
-                    <h3>Lega TFT</h3>
-                    <p>La community ufficiale per gli appassionati di Teamfight Tactics.</p>
+            <div class="footer-shell">
+                <div class="footer-brand">
+                    <a href="index.html" class="footer-mark" aria-label="Lega TFT home">
+                        <img src="assets/img/tft-league-emblem.svg" alt="" class="footer-logo-img" aria-hidden="true">
+                        <span>
+                            <strong>Lega TFT</strong>
+                            <small>Competitive Community</small>
+                        </span>
+                    </a>
+                    <p>La community competitiva di Teamfight Tactics: tornei, ranking stagionale e campioni della Convergenza.</p>
+                    <div class="footer-socials" aria-label="Canali social">
+                        <a href="https://www.instagram.com/redshift_gaming/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.facebook.com/RedShiftGaming" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://discord.gg/YHej49XbHn" target="_blank" rel="noopener noreferrer" aria-label="Discord"><i class="fab fa-discord"></i></a>
+                        <a href="https://chat.whatsapp.com/HcZGGvsrMIKDpEnWZot6L2" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                    </div>
                 </div>
-                <div class="footer-links">
-                    <h4>Link Rapidi</h4>
+                <nav class="footer-links" aria-label="Navigazione footer">
+                    <h4>Esplora</h4>
                     <ul>
                         <li><a href="index.html">Home</a></li>
                         <li><a href="tornei.html">Tornei</a></li>
-                        <li><a href="classifica.html">Classifiche</a></li>
+                        <li><a href="classifica.html">Ranking</a></li>
                         <li><a href="hall-of-fame.html">Hall Of Fame</a></li>
                         <li><a href="regolamento.html">Regolamento</a></li>
                         <li><a href="contatti.html">Contatti</a></li>
                     </ul>
-                </div>
+                </nav>
                 <div class="footer-links">
-                    <h4>Social</h4>
-                    <div class="social-links">
-                        <a href="https://discord.gg/YHej49XbHn" target="_blank" rel="noopener noreferrer" style="margin-right: 15px;"><i class="fab fa-discord"></i> Discord</a><br>
-                        <a href="https://chat.whatsapp.com/HcZGGvsrMIKDpEnWZot6L2" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i> WhatsApp</a>
-                    </div>
+                    <h4>Lega</h4>
+                    <ul>
+                        <li><a href="premi.html">Premi</a></li>
+                        <li><a href="account.html">Area Utente</a></li>
+                        <li><a href="eventi.html">Eventi</a></li>
+                        <li><a href="contatti.html#privacy-note">Privacy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-newsletter">
+                    <h4>Resta Aggiornato</h4>
+                    <p>Ricevi promemoria sui prossimi tornei, aggiornamenti ranking e novità della Lega TFT.</p>
+                    <form class="newsletter-form">
+                        <label for="footerEmail" class="sr-only">Email newsletter</label>
+                        <input id="footerEmail" type="email" placeholder="La tua email" required>
+                        <button type="submit" class="btn btn-primary">Iscriviti</button>
+                    </form>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2026 Lega TFT. Tutti i diritti riservati.</p>
+                <p>&copy; 2026 Lega TFT Messina</p>
+                <span>Teamfight Tactics community tournament hub</span>
             </div>
         </div>`;
 

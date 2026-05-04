@@ -31,5 +31,9 @@
   <path d="M256 126 321 164v75l-65 38-65-38v-75Z" fill="url(#crystal)" filter="url(#glow)"/>
   <path d="M256 126v151M191 164l130 75M321 164l-130 75" stroke="#e9fdff" stroke-opacity=".48" stroke-width="3"/>
   <path d="M144 340h224l-31 54H175Z" fill="url(#gold)"/>
-  <text x="256" y="379" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="54" font-weight="900" fill="#061225" letter-spacing="4">TFT</text>
+  <g fill="#061225">
+    <path d="M186 350h44v10h-15v24h-14v-24h-15Z"/>
+    <path d="M237 350h40v10h-27v6h23v9h-23v9h-13Z"/>
+    <path d="M282 350h44v10h-15v24h-14v-24h-15Z"/>
+  </g>
 </svg>

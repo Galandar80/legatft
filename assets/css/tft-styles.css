@@ -1197,3 +1197,230 @@ body.page-prizes .table-container {
     font-size: 0.9rem;
   }
 }
+
+/* Footer redesign and title polish. */
+.premium-ribbon-title {
+  padding: 0.2rem clamp(2.8rem, 6vw, 4.8rem) 0.55rem !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.premium-ribbon-title::before,
+.premium-ribbon-title::after {
+  top: calc(50% + 0.08rem);
+}
+
+.premium-ribbon-title::before {
+  left: 0.6rem;
+}
+
+.premium-ribbon-title::after {
+  right: 0.6rem;
+}
+
+.premium-ribbon-title {
+  background-image:
+    linear-gradient(90deg, transparent, rgba(195, 123, 38, 0.7), transparent),
+    linear-gradient(90deg, transparent, rgba(48, 211, 255, 0.22), transparent) !important;
+  background-size: min(100%, 420px) 1px, min(100%, 280px) 1px !important;
+  background-position: center bottom, center calc(100% - 5px) !important;
+  background-repeat: no-repeat !important;
+}
+
+.main-footer {
+  position: relative;
+  margin-top: clamp(3rem, 7vw, 5rem);
+  padding: clamp(2.4rem, 5vw, 4rem) 0 1.2rem !important;
+  overflow: hidden;
+  color: #fff2d2;
+  border-top: 1px solid rgba(196, 121, 38, 0.84) !important;
+  background:
+    radial-gradient(circle at 50% 0, rgba(34, 201, 255, 0.16), transparent 24rem),
+    linear-gradient(180deg, rgba(5, 8, 19, 0.98), rgba(2, 4, 11, 1)) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 226, 146, 0.16), 0 -20px 44px rgba(0, 0, 0, 0.34);
+}
+
+.main-footer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(196, 121, 38, 0.34), transparent 16%, transparent 84%, rgba(196, 121, 38, 0.34)),
+    url('../img/tft-hero-council.png') center 42% / cover no-repeat;
+  opacity: 0.18;
+  mix-blend-mode: screen;
+}
+
+.main-footer .container {
+  position: relative;
+  z-index: 1;
+}
+
+.footer-shell {
+  display: grid;
+  grid-template-columns: minmax(260px, 1.35fr) minmax(150px, 0.7fr) minmax(150px, 0.7fr) minmax(260px, 1fr);
+  gap: clamp(1.2rem, 3vw, 2.2rem);
+  padding: clamp(1.2rem, 3vw, 2rem);
+  border: 1px solid rgba(196, 121, 38, 0.72);
+  background:
+    radial-gradient(circle at 18% 0, rgba(141, 76, 255, 0.16), transparent 16rem),
+    linear-gradient(180deg, rgba(8, 14, 31, 0.88), rgba(3, 6, 16, 0.94));
+  clip-path: polygon(18px 0, calc(100% - 18px) 0, 100% 18px, 100% calc(100% - 18px), calc(100% - 18px) 100%, 18px 100%, 0 calc(100% - 18px), 0 18px);
+  box-shadow: 0 0 0 2px rgba(2, 5, 12, 0.96), inset 0 1px 0 rgba(255, 226, 146, 0.12), 0 22px 44px rgba(0, 0, 0, 0.4);
+}
+
+.footer-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9rem;
+  color: #f8d474 !important;
+  text-decoration: none;
+}
+
+.footer-logo-img {
+  width: 76px !important;
+  height: 76px !important;
+  object-fit: contain;
+  filter: drop-shadow(0 0 16px rgba(45, 211, 255, 0.34));
+}
+
+.footer-mark strong {
+  display: block;
+  color: #f8d474;
+  font-size: clamp(1.5rem, 2vw, 2rem);
+  line-height: 1;
+  text-transform: uppercase;
+  text-shadow: 0 2px 0 #5c2e09, 0 0 16px rgba(248, 212, 116, 0.22);
+}
+
+.footer-mark small {
+  display: block;
+  margin-top: 0.2rem;
+  color: rgba(255, 246, 223, 0.72);
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.footer-brand p,
+.footer-newsletter p {
+  max-width: 26rem;
+  margin: 1rem 0 0;
+  color: rgba(255, 246, 223, 0.78);
+}
+
+.footer-socials {
+  display: flex;
+  gap: 0.65rem;
+  margin-top: 1.25rem;
+}
+
+.footer-socials a {
+  display: inline-grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  color: #f8d474 !important;
+  border: 1px solid rgba(196, 121, 38, 0.76);
+  background: linear-gradient(180deg, rgba(16, 25, 48, 0.94), rgba(5, 8, 20, 0.98));
+  clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 10px 100%, 0 50%);
+}
+
+.footer-links h4,
+.footer-newsletter h4 {
+  margin: 0 0 0.9rem;
+  color: #f8d474 !important;
+  font-size: 1.05rem;
+  text-transform: uppercase;
+  text-shadow: 0 2px 0 rgba(89, 45, 10, 0.75);
+}
+
+.footer-links h4::after,
+.footer-newsletter h4::after {
+  content: '';
+  display: block;
+  width: 74px;
+  height: 1px;
+  margin-top: 0.45rem;
+  background: linear-gradient(90deg, #c47926, transparent);
+}
+
+.footer-links ul {
+  display: grid;
+  gap: 0.52rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.footer-links a {
+  color: rgba(255, 246, 223, 0.82) !important;
+  text-decoration: none;
+}
+
+.footer-links a:hover,
+.footer-socials a:hover {
+  color: #ffffff !important;
+  filter: brightness(1.15);
+}
+
+.newsletter-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+
+.newsletter-form input {
+  min-width: 0;
+  color: #fff6df;
+  border: 1px solid rgba(196, 121, 38, 0.64);
+  background: linear-gradient(180deg, rgba(2, 6, 16, 0.96), rgba(7, 13, 29, 0.96));
+  padding: 0.82rem 0.95rem;
+}
+
+.newsletter-form .btn {
+  min-width: 132px;
+}
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1rem !important;
+  padding-top: 1rem !important;
+  color: rgba(255, 246, 223, 0.62);
+  border-top: 1px solid rgba(196, 121, 38, 0.32) !important;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 980px) {
+  .footer-shell {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .footer-shell,
+  .newsletter-form,
+  .footer-bottom {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-bottom {
+    display: grid;
+  }
+}
