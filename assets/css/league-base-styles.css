@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700;800&family=Righteous&display=swap');
 
-/* Battlegrounds League - Foglio di stile principale */
+/* Lega TFT - Foglio di stile principale */
 
 :root {
   --primary-color: #f3d23e; /* Gold */
@@ -33,7 +33,7 @@
   --font-secondary: 'EB Garamond', serif;
   --font-logo: 'Righteous', cursive;
 
-  /* Hearthstone Specific */
+  /* Lega TFT base tokens */
   --hs-gold: #f3ce34;
   --hs-gold-dark: #b8860b;
   --hs-purple: #3e1e68;
@@ -275,7 +275,7 @@ body.dark-theme select {
 
 /* Hero Section */
 .hero {
-  background-image: url('../img/hearthstone-hero.png');
+  background-image: url('../img/TFT-hero.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -326,7 +326,7 @@ body.dark-theme select {
   gap: var(--spacing-md);
 }
 
-/* Bottoni Premium Hearthstone */
+/* Bottoni Premium TFT */
 .btn {
   font-family: var(--font-primary);
   font-weight: 700;
@@ -493,7 +493,7 @@ body.dark-theme select {
    VISUAL IMPROVEMENTS — all 10 enhancements
    ============================================ */
 
-/* — 1. Ornamental Hearthstone card corners — */
+/* — 1. Ornamental TFT card corners — */
 .hs-card {
     position: relative;
 }
@@ -1832,7 +1832,7 @@ tr.rank-top-3 { background: rgba(205,127,50,0.05) !important; }
 /* Nuovo stile per l'hero con l'immagine personalizzata */
 #custom-hero {
   background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
-    url('../img/hearthstone-hero.png');
+    url('../img/TFT-hero.png');
   background-position: center;
   background-size: cover;
   position: relative;
@@ -2908,7 +2908,7 @@ tr.rank-top-3 { background: rgba(205,127,50,0.05) !important; }
 
 /* ===== Premium visual pass ===== */
 :root {
-  --premium-hero-image: url('../img/premium-tavern-hero.png');
+  --premium-hero-image: url('../img/tft-hero.svg');
   --premium-surface: rgba(20, 32, 52, 0.88);
   --premium-surface-deep: rgba(9, 16, 31, 0.94);
   --premium-border: rgba(243, 210, 62, 0.38);
@@ -2917,15 +2917,15 @@ tr.rank-top-3 { background: rgba(205,127,50,0.05) !important; }
 }
 
 body.page-tornei {
-  --premium-hero-image: url('../img/premium-tournaments-hero.png');
+  --premium-hero-image: url('../img/tft-tournaments-hero.svg');
 }
 
 body.page-ranking {
-  --premium-hero-image: url('../img/premium-ranking-hero.png');
+  --premium-hero-image: url('../img/tft-ranking-hero.svg');
 }
 
 body.page-hall {
-  --premium-hero-image: url('../img/premium-hall-hero.png');
+  --premium-hero-image: url('../img/tft-hall-hero.svg');
 }
 
 body {
@@ -3277,11 +3277,11 @@ body {
 }
 
 body.page-rules {
-  --premium-hero-image: url('../img/premium-ranking-hero.png');
+  --premium-hero-image: url('../img/tft-ranking-hero.svg');
 }
 
 body.page-contact {
-  --premium-hero-image: url('../img/premium-tavern-hero.png');
+  --premium-hero-image: url('../img/tft-hero.svg');
 }
 
 .page-hero {

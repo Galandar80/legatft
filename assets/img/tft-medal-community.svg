@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-labelledby="title">
+  <title id="title">Medaglione community</title>
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="38%" r="62%">
+      <stop offset="0" stop-color="#7b3de0"/>
+      <stop offset=".58" stop-color="#35136d"/>
+      <stop offset="1" stop-color="#09091c"/>
+    </radialGradient>
+    <linearGradient id="gold" x1="20%" y1="0" x2="82%" y2="100%">
+      <stop offset="0" stop-color="#fff1a9"/>
+      <stop offset=".45" stop-color="#e9b34e"/>
+      <stop offset="1" stop-color="#7c4215"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="6" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <path d="M80 8 125 25 152 67 142 116 105 149H55l-37-33L8 67l27-42Z" fill="#070914" stroke="url(#gold)" stroke-width="5"/>
+  <circle cx="80" cy="80" r="58" fill="url(#bg)" stroke="#6bd7ff" stroke-opacity=".24" stroke-width="2"/>
+  <path filter="url(#glow)" fill="url(#gold)" d="M80 131 35 88c-20-20-7-53 21-53 12 0 20 6 24 14 4-8 12-14 24-14 28 0 41 33 21 53Z"/>
+</svg>

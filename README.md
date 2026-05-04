@@ -1,6 +1,6 @@
-# Battlegrounds League
+# Lega TFT
 
-Sito statico per la gestione e la pubblicazione della Battlegrounds League: home, tornei, classifiche, eventi, premi, Hall of Fame, contatti e pannelli admin.
+Sito statico per la gestione e la pubblicazione della Lega TFT: home, tornei, classifiche, eventi, premi, Hall of Fame, contatti e pannelli admin.
 
 ## Setup rapido
 
@@ -20,7 +20,7 @@ python -m http.server 8000
 
 ## Firebase
 
-La configurazione client e' in `assets/js/firebase-config.js` e punta al progetto `legabattlegrounds`.
+La configurazione client e' in `assets/js/firebase-config.js` e punta al progetto `legatft-7ba5e`.
 
 Il sito usa ancora gli SDK compat:
 
@@ -39,7 +39,8 @@ Pagine protette:
 - `admin-dashboard.html`
 - `backend-improved.html`
 - `backend.html`
-- `deckadmin.html`
+
+La dashboard principale e' `backend-improved.html`; eventuali strumenti legacy non piu' presenti non sono linkati dalla dashboard.
 
 Per autorizzare un admin in modo completo servono:
 
@@ -64,7 +65,7 @@ La suite copre il core testabile in `assets/js/app-core.js`: escape HTML, aggreg
 - `eventi.html`: eventi futuri e passati da Firebase.
 - `classifica.html`: ranking e profili giocatori.
 - `assets/js/`: logica frontend.
-- `assets/css/`: stili condivisi e calcolatore.
+- `assets/css/`: stili condivisi e tema TFT.
 - `database_setup/`: strumenti manuali per inizializzare statistiche.
 
 ## Note di sicurezza

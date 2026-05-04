@@ -23,6 +23,10 @@ function formatTournamentDate(torneo) {
     });
 }
 
+function formatTournamentTime(torneo) {
+    return torneo.orario ? `<p><strong>Orario:</strong> ${html(torneo.orario)}</p>` : '';
+}
+
 function isUpcomingTournament(torneo) {
     const date = parseTournamentDate(torneo);
     if (!date) return false;
@@ -209,10 +213,11 @@ function loadUpcomingTournaments() {
                     <div class="tournament-date">
                         <i class="far fa-calendar"></i> ${html(formatTournamentDate(torneo))}
                     </div>
-                    <h4 class="tournament-title">${html(torneo.nome || 'Torneo Battlegrounds League')}</h4>
+                    <h4 class="tournament-title">${html(torneo.nome || 'Torneo Lega TFT')}</h4>
                     ${torneo.luogo ? `<div class="tournament-location"><i class="fas fa-map-marker-alt"></i> ${html(torneo.luogo)}</div>` : ''}
                     <div class="tournament-details">
-                        <p><strong>Formato:</strong> ${html(torneo.tipo || torneo.formato || 'Battlegrounds')}</p>
+                        <p><strong>Formato:</strong> ${html(torneo.tipo || torneo.formato || 'TFT')}</p>
+                        ${formatTournamentTime(torneo)}
                         ${cupInfo(torneo, cups)}
                         <p><strong>Iscrizione:</strong> ${torneo.iscrizioneAperta === false ? 'Chiusa' : 'Aperta'}</p>
                         ${torneo.linkChallonge ? `<p><strong>Bracket:</strong> <a href="${window.safeURL ? window.safeURL(torneo.linkChallonge) : html(torneo.linkChallonge)}" target="_blank" rel="noopener noreferrer">Challonge</a></p>` : ''}

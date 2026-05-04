@@ -132,11 +132,11 @@ function caricaEventi() {
                     eventCard.innerHTML = `
                         <img src="${immagineEvento}" alt="${html(evento.nome || 'Evento')}" class="event-img">
                         <div class="event-info">
-                            <h3 class="event-title">${html(evento.nome || 'Evento Battlegrounds League')}</h3>
+                            <h3 class="event-title">${html(evento.nome || 'Evento Lega TFT')}</h3>
                             <p class="event-date"><i class="far fa-calendar-alt"></i> ${formattedData} ${countdownText}</p>
                             <p class="event-time"><i class="far fa-clock"></i> Inizio: ${html(evento.orario || 'Da definire')}</p>
                             <p class="event-location"><i class="fas fa-map-marker-alt"></i> ${html(evento.luogo || 'Luogo da definire')}</p>
-                            <p class="event-description">${html(evento.descrizione || 'Vieni a partecipare a questo evento della Battlegrounds League!')}</p>
+                            <p class="event-description">${html(evento.descrizione || 'Vieni a partecipare a questo evento della Lega TFT!')}</p>
                             <div class="event-details">
                                 <p><strong>Formato:</strong> ${html(evento.formato || 'Swiss + Top 8')}</p>
                                 <p><strong>Quota Iscrizione:</strong> ${html(evento.quota || '€15')}</p>
@@ -176,7 +176,7 @@ function caricaEventi() {
                     eventCard.innerHTML = `
                         <img src="${immagineEvento}" alt="${html(evento.nome || 'Evento')}" class="event-img">
                         <div class="event-info">
-                            <h3 class="event-title">${html(evento.nome || 'Evento Battlegrounds League')}</h3>
+                            <h3 class="event-title">${html(evento.nome || 'Evento Lega TFT')}</h3>
                             <p class="event-date"><i class="far fa-calendar-alt"></i> ${formattedData}</p>
                             <p class="event-location"><i class="fas fa-map-marker-alt"></i> ${html(evento.luogo || 'Luogo non specificato')}</p>
                             <div class="event-results">

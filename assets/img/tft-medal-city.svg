@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-labelledby="title">
+  <title id="title">Medaglione città</title>
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="38%" r="62%">
+      <stop offset="0" stop-color="#0c9cc1"/>
+      <stop offset=".58" stop-color="#0a345d"/>
+      <stop offset="1" stop-color="#071020"/>
+    </radialGradient>
+    <linearGradient id="gold" x1="18%" y1="0" x2="82%" y2="100%">
+      <stop offset="0" stop-color="#fff2a7"/>
+      <stop offset=".44" stop-color="#e7af49"/>
+      <stop offset="1" stop-color="#7a4718"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <path d="M80 8 125 25 152 67 142 116 105 149H55l-37-33L8 67l27-42Z" fill="#070914" stroke="url(#gold)" stroke-width="5"/>
+  <circle cx="80" cy="80" r="58" fill="url(#bg)" stroke="#6bd7ff" stroke-opacity=".3" stroke-width="2"/>
+  <g filter="url(#glow)" fill="url(#gold)">
+    <path d="M26 124h108v14H26Z"/>
+    <path d="M34 63h24v61H34Zm8 12h8v10h-8Zm0 19h8v10h-8Z"/>
+    <path d="M68 41h25v83H68Zm8 15h9v10h-9Zm0 20h9v10h-9Zm0 20h9v10h-9Z"/>
+    <path d="M103 72h23v52h-23Zm7 12h8v10h-8Zm0 18h8v10h-8Z"/>
+    <path d="M80 23 98 41H62Z"/>
+  </g>
+</svg>

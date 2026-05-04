@@ -1,9 +1,9 @@
 {
-  "name": "leggedellostretto",
+  "name": "lega-tft",
   "version": "1.0.0",
   "scripts": {
     "test": "jest",
-    "check:js": "node --check assets/js/app-core.js && node --check assets/js/utils.js && node --check assets/js/firebase-config.js && node --check assets/js/user-auth.js && node --check assets/js/home.js && node --check assets/js/classifica.js && node --check assets/js/tornei.js && node --check assets/js/eventi.js && node --check assets/js/admin-auth.js && node --check assets/js/script-backend-improved.js"
+    "check:js": "node --check assets/js/app-core.js && node --check assets/js/utils.js && node --check assets/js/firebase-config.js && node --check assets/js/user-auth.js && node --check assets/js/home.js && node --check assets/js/classifica.js && node --check assets/js/tornei.js && node --check assets/js/eventi.js && node --check assets/js/admin-auth.js && node --check assets/js/script-backend-improved.js && node --check assets/js/admin-cups.js"
   },
   "jest": {
     "testEnvironment": "jsdom"

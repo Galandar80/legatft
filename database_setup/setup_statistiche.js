@@ -1,16 +1,16 @@
-// Script per aggiungere i dati delle statistiche al database Firebase - Battlegrounds League
+// Script per aggiungere i dati delle statistiche al database Firebase - Lega TFT
 // Eseguire questo script per inizializzare o aggiornare le statistiche
 
 // Configurazione Firebase
 const firebaseConfig = {
-    apiKey: "AIzaSyB0CLFB0FxRLWvqW-5mwY2XLJ-RwNsbAq0",
-    authDomain: "legabattlegrounds.firebaseapp.com",
-    databaseURL: "https://legabattlegrounds-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "legabattlegrounds",
-    storageBucket: "legabattlegrounds.firebasestorage.app",
-    messagingSenderId: "972949103668",
-    appId: "1:972949103668:web:1e98b836268c94c7a81661",
-    measurementId: "G-HCVP5B0BL8"
+    apiKey: "AIzaSyDXmEYK9ZWikOEeI5q2OEeXP8ugqYiAFis",
+    authDomain: "legatft-7ba5e.firebaseapp.com",
+    databaseURL: "https://legatft-7ba5e-default-rtdb.firebaseio.com",
+    projectId: "legatft-7ba5e",
+    storageBucket: "legatft-7ba5e.firebasestorage.app",
+    messagingSenderId: "190413073048",
+    appId: "1:190413073048:web:f91edf87ff446a89653eed",
+    measurementId: "G-P896J948LR"
 };
 
 // Inizializzazione Firebase (esempio con Node.js)

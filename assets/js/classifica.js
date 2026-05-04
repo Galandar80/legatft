@@ -40,7 +40,7 @@ function updateRankingPodium(sortedPlayers) {
 
         const points = document.createElement('div');
         points.className = 'podium-points';
-        points.textContent = player ? `${player[1].total} MMR` : '0 MMR';
+        points.textContent = player ? `${player[1].total} punti` : '0 punti';
 
         card.append(rank, name, points);
         podium.appendChild(card);

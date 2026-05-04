@@ -2,7 +2,7 @@
             font-family: 'Roboto', sans-serif; 
             margin: 0;
             padding: 20px;
-            background-color: #2E62A3; /* Tema Tavern */
+            background-color: #2E62A3; /* Tema TFT */
             background-image: url('https://images5.alphacoders.com/132/1329624.png');
             background-size: cover;
             background-attachment: fixed;
@@ -43,7 +43,7 @@
         }
         
         .mode-btn.active {
-            background-color: #D70000; /* Tema Tavern */
+            background-color: #D70000; /* Tema TFT */
             color: white;
             border-color: #D70000;
         }

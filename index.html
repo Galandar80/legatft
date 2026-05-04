@@ -4,19 +4,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Battlegrounds League - La lega di Messina">
-    <title>Hearthstone Battlegrounds League - Messina</title>
+    <meta name="description" content="Lega TFT - La lega di Messina">
+    <title>Lega TFT - Messina</title>
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://galandar80.github.io/LegaDelloStretto/index.html">
-    <meta property="og:title" content="Hearthstone Battlegrounds League - Home">
-    <meta property="og:description" content="La prima lega di Hearthstone Battlegrounds. Partecipa ai tornei, scala il ranking e vinci premi esclusivi!">
-    <meta property="og:image" content="https://galandar80.github.io/LegaDelloStretto/assets/img/battlegrounds-league-emblem.png">
+    <meta property="og:title" content="Lega TFT - Home">
+    <meta property="og:description" content="La prima lega di Teamfight Tactics. Partecipa ai tornei, scala il ranking e vinci premi esclusivi!">
+    <meta property="og:image" content="https://galandar80.github.io/LegaDelloStretto/assets/img/tft-league-emblem.svg">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- CSS personalizzato -->
-    <link rel="stylesheet" href="assets/css/hearthstone-styles.css">
-    <link rel="icon" href="assets/img/battlegrounds-league-emblem.png" type="image/png">
+    <link rel="stylesheet" href="assets/css/tft-styles.css">
+    <link rel="icon" href="assets/img/tft-league-emblem.svg" type="image/svg+xml">
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
@@ -29,8 +29,8 @@
     <header class="main-header">
         <div class="container header-container">
             <div class="logo-container">
-                <img src="assets/img/battlegrounds-league-emblem.png" alt="Logo Battlegrounds League" class="logo-img" loading="lazy">
-                <span class="site-title">Battlegrounds League</span>
+                <img src="assets/img/tft-league-emblem.svg" alt="Logo Lega TFT" class="logo-img" loading="lazy">
+                <span class="site-title">Lega TFT</span>
             </div>
             <nav class="main-nav" id="mainNav">
                 <ul class="nav-list">
@@ -58,8 +58,9 @@
     <main id="main-content">
     <section class="hero" id="custom-hero">
         <div class="hero-content fade-in">
-            <h1 class="hero-title">Battlegrounds League</h1>
-            <p class="hero-subtitle">La prima lega di Hearthstone Battlegrounds</p>
+            <img src="assets/img/tft-league-emblem.svg" alt="" class="hero-emblem" aria-hidden="true">
+            <h1 class="hero-title">Lega TFT</h1>
+            <p class="hero-subtitle">La prima lega di Teamfight Tactics</p>
             <div class="hero-buttons">
                 <a href="tornei.html" class="btn btn-primary">Prossimi Tornei</a>
                 <a href="contatti.html" class="btn btn-secondary">Contattaci</a>
@@ -71,28 +72,28 @@
     <section class="stats-bar">
         <div class="container stats-flex">
             <div class="stat-item">
-                <div class="stat-icon"><i class="fas fa-users"></i></div>
+                <div class="stat-icon"><img src="assets/img/tft-medal-players.svg" alt="" aria-hidden="true"></div>
                 <div class="stat-data">
                     <span class="stat-number">11+</span>
                     <span class="stat-label">Giocatori</span>
                 </div>
             </div>
             <div class="stat-item">
-                <div class="stat-icon"><i class="fas fa-trophy"></i></div>
+                <div class="stat-icon"><img src="assets/img/tft-medal-trophy.svg" alt="" aria-hidden="true"></div>
                 <div class="stat-data">
                     <span class="stat-number">1+</span>
                     <span class="stat-label">Tornei Organizzati</span>
                 </div>
             </div>
             <div class="stat-item">
-                <div class="stat-icon"><i class="fas fa-city"></i></div>
+                <div class="stat-icon"><img src="assets/img/tft-medal-city.svg" alt="" aria-hidden="true"></div>
                 <div class="stat-data">
                     <span class="stat-number">1+</span>
                     <span class="stat-label">Città</span>
                 </div>
             </div>
             <div class="stat-item">
-                <div class="stat-icon"><i class="fas fa-heart"></i></div>
+                <div class="stat-icon"><img src="assets/img/tft-medal-community.svg" alt="" aria-hidden="true"></div>
                 <div class="stat-data">
                     <span class="stat-label">Una Community</span>
                     <span class="stat-sublabel">In Continua Crescita</span>
@@ -103,34 +104,34 @@
 
     <section class="premium-feature-band" aria-labelledby="why-title">
         <div class="container">
-            <h2 id="why-title" class="premium-ribbon-title">Perche Partecipare</h2>
+            <h2 id="why-title" class="premium-ribbon-title">Perché Partecipare</h2>
             <div class="premium-feature-grid">
                 <article class="premium-feature-card">
-                    <div class="premium-feature-icon"><i class="fas fa-trophy"></i></div>
+                    <div class="premium-feature-icon"><img src="assets/img/tft-medal-trophy.svg" alt="" aria-hidden="true"></div>
                     <div>
                         <h3>Tornei ufficiali</h3>
-                        <p>Partecipa agli eventi della lega e conquista rating per la classifica stagionale.</p>
+                        <p>Partecipa ai tornei ufficiali della Lega TFT e dimostra il tuo valore nelle arene di Convergenza.</p>
                     </div>
                 </article>
                 <article class="premium-feature-card">
-                    <div class="premium-feature-icon"><i class="fas fa-users"></i></div>
+                    <div class="premium-feature-icon"><img src="assets/img/tft-medal-players.svg" alt="" aria-hidden="true"></div>
                     <div>
-                        <h3>Community</h3>
-                        <p>Entra in un gruppo locale di giocatori, eventi e sfide ricorrenti.</p>
+                        <h3>Community attiva</h3>
+                        <p>Unisciti alla nostra community di appassionati e condividi la tua passione per TFT.</p>
                     </div>
                 </article>
                 <article class="premium-feature-card">
-                    <div class="premium-feature-icon"><i class="fas fa-gem"></i></div>
+                    <div class="premium-feature-icon"><img src="assets/img/tft-medal-gem.svg" alt="" aria-hidden="true"></div>
                     <div>
                         <h3>Premi esclusivi</h3>
                         <p>Accumula risultati, riscatti e riconoscimenti dedicati ai migliori piazzamenti.</p>
                     </div>
                 </article>
                 <article class="premium-feature-card">
-                    <div class="premium-feature-icon"><i class="fas fa-chart-line"></i></div>
+                    <div class="premium-feature-icon"><img src="assets/img/tft-medal-ranking.svg" alt="" aria-hidden="true"></div>
                     <div>
-                        <h3>Ranking</h3>
-                        <p>Scala la classifica e rendi visibile il tuo percorso nella Battlegrounds League.</p>
+                        <h3>Ranking competitivo</h3>
+                        <p>Scala il ranking e diventa uno dei migliori strateghi della Lega TFT.</p>
                     </div>
                 </article>
             </div>
@@ -148,7 +149,7 @@
                 <div class="premium-empty" style="grid-column: 1/-1;">
                     <i class="fas fa-spinner fa-spin"></i>
                     <div class="empty-title">Caricamento torneo</div>
-                    <div class="empty-copy">Stiamo recuperando la prossima data della Battlegrounds League.</div>
+                    <div class="empty-copy">Stiamo recuperando la prossima data della Lega TFT.</div>
                 </div>
             </div>
         </div>
@@ -168,7 +169,7 @@
                     <form id="contactForm" action="https://formspree.io/f/mzzrdrwe" method="POST">
                         <!-- ... rest of the form ... -->
                         <input type="hidden" name="_subject"
-                            value="Nuovo messaggio dal sito Battlegrounds League (Homepage)">
+                            value="Nuovo messaggio dal sito Lega TFT (Homepage)">
                         <input type="hidden" name="_next" value="index.html?contact_success=true">
                         <div class="form-group">
                             <label for="name">Nome e Cognome</label>

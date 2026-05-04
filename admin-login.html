@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login - Battlegrounds League</title>
-    <link rel="stylesheet" href="assets/css/hearthstone-styles.css">
+    <title>Admin Login - Lega TFT</title>
+    <link rel="stylesheet" href="assets/css/tft-styles.css">
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
     <script src="assets/js/firebase-config.js"></script>
@@ -73,10 +73,24 @@
             box-shadow: 0 0 15px rgba(243, 210, 62, 0.3);
         }
 
+        .btn-google {
+            width: 100%;
+            margin-top: 0.75rem;
+            padding: 12px;
+            background: #fff;
+            color: #1a0a2e;
+            border: 2px solid var(--hs-gold);
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-family: var(--font-primary);
+        }
+
         .error-msg {
             color: #dc3545;
             margin-top: 10px;
             display: none;
+            line-height: 1.4;
         }
     </style>
 </head>
@@ -92,11 +106,20 @@
                 <input type="password" id="password" class="form-control" placeholder="Password" autocomplete="current-password" required>
             </div>
             <button type="submit" class="btn-login">Accedi</button>
+            <button type="button" class="btn-google" id="googleAdminLogin">Accedi con Google</button>
             <div id="errorMsg" class="error-msg">Credenziali non valide o account non autorizzato</div>
         </form>
     </div>
 
     <script>
+        function showLoginError(error, fallback) {
+            const errorMsg = document.getElementById('errorMsg');
+            const code = error && error.code ? ` (${error.code})` : '';
+            const message = error && error.message ? error.message : fallback;
+            errorMsg.textContent = `${message}${code}`;
+            errorMsg.style.display = 'block';
+        }
+
         document.getElementById('loginForm').addEventListener('submit', function (e) {
             e.preventDefault();
             const email = document.getElementById('email').value.trim();
@@ -110,9 +133,25 @@
 
             AdminAuth.login(email, password).catch(function (error) {
                 console.error('Errore login admin:', error);
-                errorMsg.style.display = 'block';
+                showLoginError(error, 'Credenziali non valide o account non autorizzato');
                 submitButton.disabled = false;
                 submitButton.textContent = 'Accedi';
+            });
+        });
+
+        document.getElementById('googleAdminLogin').addEventListener('click', function () {
+            const button = this;
+            const errorMsg = document.getElementById('errorMsg');
+
+            button.disabled = true;
+            button.textContent = 'Accesso Google...';
+            errorMsg.style.display = 'none';
+
+            AdminAuth.loginWithGoogle().catch(function (error) {
+                console.error('Errore login admin Google:', error);
+                showLoginError(error, 'Accesso Google non riuscito o account non autorizzato');
+                button.disabled = false;
+                button.textContent = 'Accedi con Google';
             });
         });
     </script>

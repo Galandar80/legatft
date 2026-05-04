@@ -33,8 +33,8 @@ document.addEventListener('DOMContentLoaded', function () {
         <div class="container">
             <div class="footer-content">
                 <div class="footer-info">
-                    <h3>Battlegrounds League</h3>
-                    <p>La community ufficiale per gli appassionati di Hearthstone Battlegrounds.</p>
+                    <h3>Lega TFT</h3>
+                    <p>La community ufficiale per gli appassionati di Teamfight Tactics.</p>
                 </div>
                 <div class="footer-links">
                     <h4>Link Rapidi</h4>
@@ -50,13 +50,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 <div class="footer-links">
                     <h4>Social</h4>
                     <div class="social-links">
-                        <a href="#" style="margin-right: 15px;"><i class="fab fa-discord"></i> Discord</a><br>
-                        <a href="#"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+                        <a href="https://discord.gg/YHej49XbHn" target="_blank" rel="noopener noreferrer" style="margin-right: 15px;"><i class="fab fa-discord"></i> Discord</a><br>
+                        <a href="https://chat.whatsapp.com/Ey0ypo4rohjB9vQMJSyJOG" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i> WhatsApp</a>
                     </div>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2026 Battlegrounds League. Tutti i diritti riservati.</p>
+                <p>&copy; 2026 Lega TFT. Tutti i diritti riservati.</p>
             </div>
         </div>`;
 

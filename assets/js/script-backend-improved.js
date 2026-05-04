@@ -1,4 +1,4 @@
-// Script migliorato per il backend della Battlegrounds League
+// Script migliorato per il backend della Lega TFT
 
 // Funzioni per la gestione avanzata dei tornei e dei giocatori
 let chartInstances = {}; // Per tenere traccia dei grafici creati
@@ -570,6 +570,7 @@ function salvaImpostazioniTorneo() {
     const nome = document.getElementById('editNomeTorneo').value.trim();
     const tipo = document.getElementById('editTipoTorneo').value.trim();
     const data = document.getElementById('editDataTorneo').value;
+    const orario = document.getElementById('editOrarioTorneo').value;
     const linkChallonge = document.getElementById('editLinkChallonge').value.trim();
     const immagine = document.getElementById('editImmagineTorneo').value.trim();
     const cupId = document.getElementById('editTorneoCoppa').value;
@@ -585,7 +586,8 @@ function salvaImpostazioniTorneo() {
         nome: nome,
         cupId: cupId || null,
         iscrizioneAperta: iscrizioneAperta,
-        immagine: immagine || null
+        immagine: immagine || null,
+        orario: orario || null
     };
     
     // Aggiungi campo tipo se presente
@@ -616,6 +618,7 @@ function salvaImpostazioniTorneo() {
                 torneiData[torneoSelezionatoId].nome = nome;
                 if (tipo) torneiData[torneoSelezionatoId].tipo = tipo;
                 if (data) torneiData[torneoSelezionatoId].dataInizio = data;
+                torneiData[torneoSelezionatoId].orario = orario || null;
                 if (linkChallonge) torneiData[torneoSelezionatoId].linkChallonge = linkChallonge;
                 torneiData[torneoSelezionatoId].immagine = immagine || null;
                 torneiData[torneoSelezionatoId].cupId = cupId || null;
@@ -1105,7 +1108,10 @@ function eliminaEvento(eventoId) {
 // --- GESTIONE COPPE E HALL OF FAME ---
 
 // Inizializzazione navigazione sidebar
-document.addEventListener('DOMContentLoaded', () => {
+function initCoppeHofAdmin() {
+    if (window.__coppeHofAdminReady) return;
+    window.__coppeHofAdminReady = true;
+
     const menuTornei = document.getElementById('menuTornei');
     const menuStatistiche = document.getElementById('menuStatistiche');
     const menuEventi = document.getElementById('menuEventi');
@@ -1187,61 +1193,36 @@ document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('btnSalvaHOF')) {
         document.getElementById('btnSalvaHOF').onclick = salvaHOF;
     }
-});
+
+    caricaCoppe();
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCoppeHofAdmin);
+} else {
+    initCoppeHofAdmin();
+}
 
 // Funzioni per le Coppe
 function caricaCoppe() {
-    database.ref('cups').on('value', (snapshot) => {
-        const coppe = snapshot.val() || {};
-        const container = document.getElementById('coppeList');
-        const selectTorneo = document.getElementById('nuovoTorneoCoppa');
-        const selectEdit = document.getElementById('editTorneoCoppa');
-        
-        if (!container) return;
-        container.innerHTML = '';
-        
-        // Svuota select
-        if (selectTorneo) selectTorneo.innerHTML = '<option value="">Nessuna Coppa</option>';
-        if (selectEdit) selectEdit.innerHTML = '<option value="">Nessuna Coppa</option>';
-
-        Object.entries(coppe).forEach(([id, coppa]) => {
-            // Aggiungi alla lista
-            const item = document.createElement('div');
-            item.className = 'event-card';
-            item.style.marginBottom = '10px';
-            item.innerHTML = `
-                <div class="event-info">
-                    <strong>${coppa.name}</strong>
-                </div>
-                <div class="event-actions">
-                    <button onclick="eliminaCoppa('${id}')" class="small-button" style="background:#dc3545"><i class="fas fa-trash"></i></button>
-                </div>
-            `;
-            container.appendChild(item);
-
-            // Aggiungi alle select
-            const opt = `<option value="${id}">${coppa.name}</option>`;
-            if (selectTorneo) selectTorneo.innerHTML += opt;
-            if (selectEdit) selectEdit.innerHTML += opt;
-        });
-    });
+    if (window.AdminCupsManager) {
+        return window.AdminCupsManager.load();
+    }
+    return Promise.resolve({});
 }
 
 function creaCoppa() {
-    const nome = document.getElementById('nuovaCoppaNome').value.trim();
-    if (!nome) return showAlert('Inserisci un nome per la coppa', 'error');
-    
-    database.ref('cups').push({ name: nome, creatoIl: new Date().toISOString() })
-        .then(() => {
-            showAlert('Coppa creata!');
-            document.getElementById('nuovaCoppaNome').value = '';
-        });
+    if (window.AdminCupsManager) {
+        return window.AdminCupsManager.create();
+    }
+    return Promise.resolve();
 }
 
 function eliminaCoppa(id) {
-    if (confirm('Eliminare questa coppa? I tornei associati non verranno eliminati ma non saranno più collegati.')) {
-        database.ref(`cups/${id}`).remove();
+    if (window.AdminCupsManager) {
+        return window.AdminCupsManager.delete(id);
     }
+    return Promise.resolve();
 }
 
 // Funzioni per HOF

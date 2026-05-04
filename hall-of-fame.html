@@ -4,14 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Hall of Fame della Battlegrounds League - I campioni leggendari">
+    <meta name="description" content="Hall of Fame della Lega TFT - I campioni leggendari">
     <meta property="og:type" content="website">
-    <meta property="og:title" content="Battlegrounds League - Hall Of Fame">
-    <meta property="og:description" content="Celebra i campioni leggendari della Battlegrounds League.">
-    <meta property="og:image" content="https://galandar80.github.io/LegaDelloStretto/assets/img/battlegrounds-league-emblem.png">
-    <title>Hall of Fame - Battlegrounds League</title>
-    <link rel="stylesheet" href="assets/css/hearthstone-styles.css">
-    <link rel="icon" href="assets/img/battlegrounds-league-emblem.png" type="image/png">
+    <meta property="og:title" content="Lega TFT - Hall Of Fame">
+    <meta property="og:description" content="Celebra i campioni leggendari della Lega TFT.">
+    <meta property="og:image" content="https://galandar80.github.io/LegaDelloStretto/assets/img/tft-league-emblem.svg">
+    <title>Hall of Fame - Lega TFT</title>
+    <link rel="stylesheet" href="assets/css/tft-styles.css">
+    <link rel="icon" href="assets/img/tft-league-emblem.svg" type="image/svg+xml">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
@@ -20,8 +20,8 @@
     <header class="main-header">
         <div class="container header-container">
             <div class="logo-container">
-                <img src="assets/img/battlegrounds-league-emblem.png" alt="Logo Battlegrounds League" class="logo-img" loading="lazy">
-                <span class="site-title">Battlegrounds League</span>
+                <img src="assets/img/tft-league-emblem.svg" alt="Logo Lega TFT" class="logo-img" loading="lazy">
+                <span class="site-title">Lega TFT</span>
             </div>
             <nav class="main-nav" id="mainNav">
                 <ul class="nav-list">
@@ -44,7 +44,7 @@
     <section class="hero page-hero hof-hero">
         <div class="hero-content">
             <h1 class="hero-title">Hall Of Fame</h1>
-            <p class="hero-subtitle">I campioni leggendari della Battlegrounds League</p>
+            <p class="hero-subtitle">I campioni leggendari della Lega TFT</p>
         </div>
     </section>
 
@@ -106,9 +106,9 @@
                 card.className = 'hof-card';
                 card.innerHTML = `
                     <div class=\"hof-badge\">Campione</div>
-                    <img src=\"${url(hof.imageUrl, 'assets/img/battlegrounds-league-emblem.png')}\" alt=\"${html(hof.nome || 'Campione')}\" class=\"hof-winner-img\">
+                    <img src=\"${url(hof.imageUrl, 'assets/img/tft-league-emblem.svg')}\" alt=\"${html(hof.nome || 'Campione')}\" class=\"hof-winner-img\">
                     <div class=\"hof-winner-name\">${html(hof.nome || 'Campione')}</div>
-                    <div class=\"hof-cup-name\">${html(hof.cupName || 'Battlegrounds League')}</div>
+                    <div class=\"hof-cup-name\">${html(hof.cupName || 'Lega TFT')}</div>
                 `;
                 grid.appendChild(card);
             });

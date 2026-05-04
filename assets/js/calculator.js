@@ -49,7 +49,7 @@
             const element = document.body;
             const opt = {
                 margin: 10,
-                filename: 'Calcolatore_Torneo_Hearthstone.pdf',
+                filename: 'Calcolatore_Torneo_Lega_TFT.pdf',
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { scale: 2, useCORS: true },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
@@ -563,7 +563,7 @@
                                 },
                                 title: {
                                     display: true,
-                                    text: 'Distribuzione Premi Hearthstone',
+                                    text: 'Distribuzione Premi Lega TFT',
                                     color: document.body.classList.contains('dark-mode') ? '#e0e0e0' : '#333'
                                 }
                             }
@@ -597,7 +597,7 @@
                     }
                     
                     // Salva nel localStorage
-                    localStorage.setItem('hearthstoneAdvancedConfig', JSON.stringify(config));
+                    localStorage.setItem('tftAdvancedConfig', JSON.stringify(config));
                     
                     // Mostra notifica
                     const notification = document.getElementById('saveNotification');
@@ -611,7 +611,7 @@
                 });
                 
                 // Carica la configurazione salvata
-                const savedConfig = localStorage.getItem('hearthstoneAdvancedConfig');
+                const savedConfig = localStorage.getItem('tftAdvancedConfig');
                 if (savedConfig) {
                     const config = JSON.parse(savedConfig);
                     

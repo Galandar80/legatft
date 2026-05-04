@@ -167,6 +167,7 @@ function updateHomeNextTournament() {
             }) : 'Data da definire';
             const imageUrl = torneo.immagine && window.safeURL ? window.safeURL(torneo.immagine, '') : (torneo.immagine || '');
             const cupName = torneo.cupId ? (cups[torneo.cupId]?.name || 'Si') : 'No';
+            const orario = torneo.orario ? `<p><strong>Orario:</strong> ${html(torneo.orario)}</p>` : '';
 
             container.innerHTML = `
                 <article class="tournament-card home-next-tournament-card" style="grid-column: 1/-1;">
@@ -174,10 +175,11 @@ function updateHomeNextTournament() {
                     <div class="tournament-date">
                         <i class="far fa-calendar"></i> ${html(formattedData)}
                     </div>
-                    <h3 class="tournament-title">${html(torneo.nome || 'Torneo Battlegrounds League')}</h3>
+                    <h3 class="tournament-title">${html(torneo.nome || 'Torneo Lega TFT')}</h3>
                     ${torneo.luogo ? `<div class="tournament-location"><i class="fas fa-map-marker-alt"></i> ${html(torneo.luogo)}</div>` : ''}
                     <div class="tournament-details">
-                        <p><strong>Formato:</strong> ${html(torneo.tipo || torneo.formato || 'Battlegrounds')}</p>
+                        <p><strong>Formato:</strong> ${html(torneo.tipo || torneo.formato || 'TFT')}</p>
+                        ${orario}
                         <p><strong>Coppa:</strong> ${html(cupName)}</p>
                         <p><strong>Iscrizioni:</strong> ${torneo.iscrizioneAperta === false ? 'Chiuse' : 'Aperte'}</p>
                     </div>
@@ -379,10 +381,10 @@ function updateEventi() {
                 eventCard.innerHTML = `
                     <img src="${immagineEvento}" alt="${html(evento.nome || 'Evento')}" class="event-img" onerror="this.src='${immaginiDefault[index % immaginiDefault.length]}'">
                     <div class="event-info">
-                        <h3 class="event-title">${html(evento.nome || 'Evento Battlegrounds League')}</h3>
+                        <h3 class="event-title">${html(evento.nome || 'Evento Lega TFT')}</h3>
                         <p class="event-date"><i class="far fa-calendar-alt"></i> ${formattedData} ${countdownText ? `<span class="countdown-badge">${countdownText}</span>` : ''}</p>
                         <p class="event-location"><i class="fas fa-map-marker-alt"></i> ${html(evento.luogo || 'Luogo da definire')}</p>
-                        <p class="event-description">${html(evento.descrizione || 'Vieni a partecipare a questo evento della Battlegrounds League!')}</p>
+                        <p class="event-description">${html(evento.descrizione || 'Vieni a partecipare a questo evento della Lega TFT!')}</p>
                         <a href="eventi.html" class="event-link">Maggiori Informazioni</a>
                     </div>
                 `;
@@ -521,7 +523,7 @@ function initFirebaseAndLoadRankings() {
                         <h3 class="event-title">Torneo Regionale Messina</h3>
                         <p class="event-date"><i class="far fa-calendar-alt"></i> 22 Dicembre 2023</p>
                         <p class="event-location"><i class="fas fa-map-marker-alt"></i> Games Academy Messina</p>
-                        <p class="event-description">Il più grande torneo regionale della Battlegrounds League con un montepremi di 800 pacchetti e premi esclusivi.</p>
+                        <p class="event-description">Il più grande torneo regionale della Lega TFT con un montepremi di 800 pacchetti e premi esclusivi.</p>
                         <a href="eventi.html" class="event-link">Maggiori Informazioni</a>
                     </div>
                 </div>

@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-labelledby="title">
+  <title id="title">Medaglione cristallo premi</title>
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="38%" r="62%">
+      <stop offset="0" stop-color="#822cff"/>
+      <stop offset=".58" stop-color="#2a0e62"/>
+      <stop offset="1" stop-color="#09091c"/>
+    </radialGradient>
+    <linearGradient id="gold" x1="20%" y1="0" x2="82%" y2="100%">
+      <stop offset="0" stop-color="#fff0a8"/>
+      <stop offset=".45" stop-color="#e6ad49"/>
+      <stop offset="1" stop-color="#7a4216"/>
+    </linearGradient>
+    <linearGradient id="gem" x1="20%" y1="5%" x2="80%" y2="100%">
+      <stop offset="0" stop-color="#f2d7ff"/>
+      <stop offset=".45" stop-color="#a64cff"/>
+      <stop offset="1" stop-color="#4010a8"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="7" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <path d="M80 8 125 25 152 67 142 116 105 149H55l-37-33L8 67l27-42Z" fill="#070914" stroke="url(#gold)" stroke-width="5"/>
+  <circle cx="80" cy="80" r="58" fill="url(#bg)" stroke="#6bd7ff" stroke-opacity=".24" stroke-width="2"/>
+  <g filter="url(#glow)">
+    <path d="M80 30 122 56v48l-42 26-42-26V56Z" fill="#110a2e" stroke="url(#gold)" stroke-width="4"/>
+    <path d="M80 42 108 59 96 104 80 118 64 104 52 59Z" fill="url(#gem)"/>
+    <path d="M52 59h56M64 104l16-62 16 62M80 118V42" fill="none" stroke="#f8e8ff" stroke-opacity=".35" stroke-width="2"/>
+  </g>
+</svg>

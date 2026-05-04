@@ -4,9 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Battlegrounds League</title>
+    <title>Admin - Lega TFT</title>
     <link rel="icon" href="data:,">
-    <link rel="stylesheet" href="assets/css/hearthstone-styles.css">
+    <link rel="stylesheet" href="assets/css/tft-styles.css">
     <link rel="stylesheet" href="assets/css/dashboard-styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -30,6 +30,19 @@
         button { background: var(--hs-gold); color: #000; border: none; padding: 10px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; }
         button:hover { filter: brightness(1.1); }
         .event-card { background: rgba(0,0,0,0.3); border: 1px solid rgba(243, 206, 52, 0.2); padding: 15px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; }
+        .admin-cups-toolbar { display: grid; grid-template-columns: minmax(220px, 1fr) auto auto; gap: 10px; align-items: center; }
+        .admin-cups-summary { margin: 16px 0 10px; color: #d8c8ef; font-weight: 700; }
+        .admin-cups-list { display: grid; gap: 10px; min-height: 80px; }
+        .admin-cups-state,
+        .admin-cup-row { border: 1px solid rgba(243, 206, 52, 0.35); border-radius: 6px; background: rgba(0, 0, 0, 0.24); color: #fff; padding: 14px; }
+        .admin-cup-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; }
+        .admin-cup-title { font-weight: 800; overflow-wrap: anywhere; }
+        .admin-cup-meta { color: #d8c8ef; font-size: 0.9rem; margin-top: 4px; }
+        .admin-cup-delete { background: #dc3545; color: #fff; width: 42px; min-width: 42px; padding: 10px 0; }
+        @media (max-width: 760px) {
+            .admin-cups-toolbar { grid-template-columns: 1fr; }
+            .admin-cups-toolbar button { width: 100%; }
+        }
     </style>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
@@ -64,9 +77,10 @@
             <div class="sidebar-section">
                 <h3><i class="fas fa-plus-circle"></i> Nuovo Torneo</h3>
                 <div class="flex-group" style="flex-direction: column;">
-                    <input type="text" id="nuovoTorneo" placeholder="Nome torneo (es. Tavern Brawl #1)" style="width: 100%">
-                    <input type="text" id="tipoTorneo" placeholder="Tipo torneo (es. Battlegrounds)" style="width: 100%">
+                    <input type="text" id="nuovoTorneo" placeholder="Nome torneo (es. TFT Cup #1)" style="width: 100%">
+                    <input type="text" id="tipoTorneo" placeholder="Tipo torneo (es. TFT)" style="width: 100%">
                     <input type="date" id="dataTorneo" style="width: 100%">
+                    <input type="time" id="orarioTorneo" aria-label="Orario torneo" style="width: 100%">
                     <input type="url" id="linkChallonge" placeholder="Link Challonge (opzionale)" style="width: 100%">
                     <input type="url" id="immagineTorneo" placeholder="URL immagine torneo (opzionale)" style="width: 100%">
                     <select id="nuovoTorneoIscrizione" style="width: 100%">
@@ -133,7 +147,7 @@
                     </div>
                     <div class="stat-card">
                         <div class="stat-value" id="statPuntiTotali">0</div>
-                        <div class="stat-label">Rating (MMR)</div>
+                        <div class="stat-label">Punti Lega</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-value" id="statUltimoTorneo">-</div>
@@ -222,6 +236,10 @@
                             <input type="date" id="editDataTorneo" style="width: 100%">
                         </div>
                         <div>
+                            <label for="editOrarioTorneo">Orario Torneo:</label>
+                            <input type="time" id="editOrarioTorneo" style="width: 100%">
+                        </div>
+                        <div>
                             <label for="editLinkChallonge">Link Challonge:</label>
                             <input type="url" id="editLinkChallonge" placeholder="https://challonge.com/it/..."
                                 style="width: 100%">
@@ -254,12 +272,16 @@
             <!-- Sezione gestione coppe -->
             <div class="section" id="sezioneCoppe" style="display: none;">
                 <h2><i class="fas fa-trophy"></i> Gestione Coppe</h2>
-                <div class="flex-group">
-                    <input type="text" id="nuovaCoppaNome" placeholder="Nome della Coppa (es. Coppa Murloc)" style="flex-grow: 1">
-                    <button id="btnCreaCoppa"><i class="fas fa-plus"></i> Crea Coppa</button>
+                <div class="admin-cups-toolbar">
+                    <input type="text" id="nuovaCoppaNome" placeholder="Nome della Coppa (es. Coppa Murloc)"
+                        autocomplete="off">
+                    <button id="btnCreaCoppa" type="button"><i class="fas fa-plus"></i> Crea Coppa</button>
+                    <button id="btnAggiornaCoppe" type="button" class="secondary"><i class="fas fa-sync-alt"></i>
+                        Aggiorna lista</button>
                 </div>
-                <div id="coppeList" style="margin-top: 20px;">
-                    <!-- Lista coppe caricata via JS -->
+                <div class="admin-cups-summary" id="coppeSummary">Coppe caricate: 0</div>
+                <div id="coppeList" class="admin-cups-list">
+                    <div class="admin-cups-state"><i class="fas fa-spinner"></i> Caricamento coppe...</div>
                 </div>
             </div>
 
@@ -302,7 +324,7 @@
                     <h3>Aggiungi Nuovo Evento</h3>
                     <div class="form-group">
                         <label for="eventoNome">Nome Evento:</label>
-                        <input type="text" id="eventoNome" placeholder="Torneo Battlegrounds Tavern">
+                        <input type="text" id="eventoNome" placeholder="Torneo TFT Cup">
                     </div>
                     <div class="form-group">
                         <label for="eventoData">Data:</label>
@@ -376,7 +398,6 @@
         let torneoSelezionatoId = null;
         let paginaCorrente = 1;
         const torneiPerPagina = 6;
-
         // Funzione per mostrare alert
         function showAlert(message, type = 'success') {
             const alertDiv = document.createElement('div');
@@ -444,6 +465,8 @@
                 document.getElementById('sezioneStatistiche').style.display = 'none';
                 document.getElementById('gestioneTorneo').style.display = 'none';
                 document.getElementById('sezioneEventi').style.display = 'none';
+                document.getElementById('sezioneCoppe').style.display = 'none';
+                document.getElementById('sezioneHOF').style.display = 'none';
             });
 
             document.getElementById('menuStatistiche').addEventListener('click', function (e) {
@@ -455,6 +478,8 @@
                 document.getElementById('sezioneStatistiche').style.display = 'block';
                 document.getElementById('gestioneTorneo').style.display = 'none';
                 document.getElementById('sezioneEventi').style.display = 'none';
+                document.getElementById('sezioneCoppe').style.display = 'none';
+                document.getElementById('sezioneHOF').style.display = 'none';
                 console.log("Sto per chiamare caricaStatistiche()");
                 if (typeof caricaStatistiche === 'function') {
                     caricaStatistiche();
@@ -473,12 +498,21 @@
                 document.getElementById('sezioneStatistiche').style.display = 'none';
                 document.getElementById('gestioneTorneo').style.display = 'none';
                 document.getElementById('sezioneEventi').style.display = 'block';
+                document.getElementById('sezioneCoppe').style.display = 'none';
+                document.getElementById('sezioneHOF').style.display = 'none';
                 console.log("Sto per chiamare caricaEventi()");
                 if (typeof caricaEventi === 'function') {
                     caricaEventi(); // Carica gli eventi quando si apre la sezione
                     console.log("caricaEventi() eseguita con successo");
                 } else {
                     console.error("Errore: caricaEventi non è una funzione definita");
+                }
+            });
+
+            document.getElementById('menuCoppe').addEventListener('click', function (e) {
+                e.preventDefault();
+                if (window.AdminCupsManager) {
+                    window.AdminCupsManager.open();
                 }
             });
 
@@ -629,6 +663,7 @@
                                 <p><i class="fas fa-trophy"></i> Coppa: ${cupName}</p>
                                 ${torneo.tipo ? `<p><i class="fas fa-tag"></i> ${torneo.tipo}</p>` : ''}
                                 ${torneo.dataInizio ? `<p><i class="fas fa-calendar-day"></i> ${torneo.dataInizio}</p>` : ''}
+                                ${torneo.orario ? `<p><i class="far fa-clock"></i> ${torneo.orario}</p>` : ''}
                                 ${torneo.linkChallonge ? `<p><i class="fas fa-trophy"></i> <a href="${torneo.linkChallonge}" target="_blank" class="challonge-link">Bracket Challonge</a></p>` : ''}
                                 <p><i class="fas fa-trophy"></i> Vincitore: ${vincitore.nome} (${vincitore.punti || 0} punti)</p>
                             </div>
@@ -698,6 +733,7 @@
             const nome = document.getElementById('nuovoTorneo').value.trim();
             const tipo = document.getElementById('tipoTorneo').value.trim();
             const data = document.getElementById('dataTorneo').value;
+            const orario = document.getElementById('orarioTorneo').value;
             const linkChallonge = document.getElementById('linkChallonge').value.trim();
             const immagine = document.getElementById('immagineTorneo').value.trim();
             const iscrizioneAperta = document.getElementById('nuovoTorneoIscrizione').value === 'true';
@@ -718,6 +754,7 @@
 
             if (tipo) nuovoTorneo.tipo = tipo;
             if (data) nuovoTorneo.dataInizio = data;
+            if (orario) nuovoTorneo.orario = orario;
             if (linkChallonge) nuovoTorneo.linkChallonge = linkChallonge;
             if (immagine) nuovoTorneo.immagine = immagine;
             if (cupId) nuovoTorneo.cupId = cupId;
@@ -727,6 +764,7 @@
                     document.getElementById('nuovoTorneo').value = '';
                     document.getElementById('tipoTorneo').value = '';
                     document.getElementById('dataTorneo').value = '';
+                    document.getElementById('orarioTorneo').value = '';
                     document.getElementById('linkChallonge').value = '';
                     document.getElementById('immagineTorneo').value = '';
                     document.getElementById('nuovoTorneoIscrizione').value = 'true';
@@ -761,6 +799,7 @@
             document.getElementById('editNomeTorneo').value = torneo.nome;
             document.getElementById('editTipoTorneo').value = torneo.tipo || '';
             document.getElementById('editDataTorneo').value = torneo.dataInizio || '';
+            document.getElementById('editOrarioTorneo').value = torneo.orario || '';
             document.getElementById('editLinkChallonge').value = torneo.linkChallonge || '';
             document.getElementById('editImmagineTorneo').value = torneo.immagine || '';
             document.getElementById('editIscrizioneTorneo').value = torneo.iscrizioneAperta === false ? 'false' : 'true';
@@ -944,7 +983,8 @@
     </script>
 
     <!-- Script per funzionalità avanzate -->
-    <script src="assets/js/script-backend-improved.js"></script>
+    <script src="assets/js/script-backend-improved.js?v=20260504-coppe-rebuild"></script>
+    <script src="assets/js/admin-cups.js?v=20260504-rebuild"></script>
 </body>
 
 </html>

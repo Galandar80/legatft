@@ -4,20 +4,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Regolamento ufficiale della Battlegrounds League">
-    <title>Regolamento - Battlegrounds League</title>
+    <meta name="description" content="Regolamento ufficiale della Lega TFT">
+    <title>Regolamento - Lega TFT</title>
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://galandar80.github.io/LegaDelloStretto/regolamento.html">
-    <meta property="og:title" content="Battlegrounds League - Regolamento">
+    <meta property="og:title" content="Lega TFT - Regolamento">
     <meta property="og:description"
-        content="Leggi il regolamento ufficiale della Battlegrounds League. Scopri come funzionano i tornei, il sistema rating e i premi.">
-    <meta property="og:image" content="https://galandar80.github.io/LegaDelloStretto/assets/img/battlegrounds-league-emblem.png">
+        content="Leggi il regolamento ufficiale della Lega TFT. Scopri come funzionano i tornei, il sistema rating e i premi.">
+    <meta property="og:image" content="https://galandar80.github.io/LegaDelloStretto/assets/img/tft-league-emblem.svg">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- CSS personalizzato -->
-    <link rel="stylesheet" href="assets/css/hearthstone-styles.css">
-    <link rel="icon" href="assets/img/battlegrounds-league-emblem.png" type="image/png">
+    <link rel="stylesheet" href="assets/css/tft-styles.css">
+    <link rel="icon" href="assets/img/tft-league-emblem.svg" type="image/svg+xml">
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
@@ -29,8 +29,8 @@
     <header class="main-header">
         <div class="container header-container">
             <div class="logo-container">
-                <img src="assets/img/battlegrounds-league-emblem.png" alt="Logo Battlegrounds League" class="logo-img" loading="lazy">
-                <span class="site-title">Battlegrounds League</span>
+                <img src="assets/img/tft-league-emblem.svg" alt="Logo Lega TFT" class="logo-img" loading="lazy">
+                <span class="site-title">Lega TFT</span>
             </div>
             <nav class="main-nav" id="mainNav">
                 <ul class="nav-list">
@@ -53,7 +53,7 @@
     <section class="hero page-hero eventi-hero">
         <div class="hero-content fade-in">
             <h1 class="hero-title">Regolamento</h1>
-            <p class="hero-subtitle">Tutto cio che devi sapere per partecipare ai tornei della Battlegrounds League</p>
+            <p class="hero-subtitle">Tutto cio che devi sapere per partecipare ai tornei della Lega TFT</p>
         </div>
     </section>
 
@@ -61,7 +61,7 @@
     <main class="container">
         <section class="premium-dashboard-strip rules-overview" aria-label="Sintesi regolamento">
             <article class="premium-metric-card">
-                <span class="metric-kicker">Rating</span>
+                <span class="metric-kicker">Punti Lega</span>
                 <strong>Top 8 premiata</strong>
                 <span>Ogni piazzamento assegna punti stagionali</span>
             </article>
@@ -73,17 +73,17 @@
             <article class="premium-metric-card">
                 <span class="metric-kicker">Premi</span>
                 <strong>Riscatti esclusivi</strong>
-                <span>Il rating sblocca riconoscimenti della lega</span>
+                <span>I punti sbloccano riconoscimenti della lega</span>
             </article>
         </section>
 
         <!-- Sistema Punti -->
         <section class="section-container fade-in">
-            <h2 class="section-title"><i class="fas fa-star"></i> Sistema Rating</h2>
+            <h2 class="section-title"><i class="fas fa-star"></i> Sistema Punti Lega</h2>
 
             <div class="regolamento-content">
-                <p class="intro-text">Ogni partecipante ai tornei accumula rating che possono essere utilizzati per
-                    riscattare premi esclusivi. Ecco come funziona il sistema:</p>
+                <p class="intro-text">Ogni partecipante accumula punti in base al piazzamento nelle lobby TFT.
+                    I punti alimentano ranking stagionale, classifiche coppa e qualificazioni speciali.</p>
 
                 <div class="points-system">
                     <h3>Bonus Top 8</h3>
@@ -92,18 +92,18 @@
                             <thead>
                                 <tr>
                                     <th>Posizione</th>
-                                    <th>Rating Bonus</th>
+                                    <th>Punti Lega</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr><td>1° Classificato</td><td>100 rating</td></tr>
-                                <tr><td>2° Classificato</td><td>80 rating</td></tr>
-                                <tr><td>3° Classificato</td><td>60 rating</td></tr>
-                                <tr><td>4° Classificato</td><td>50 rating</td></tr>
-                                <tr><td>5° Classificato</td><td>40 rating</td></tr>
-                                <tr><td>6° Classificato</td><td>30 rating</td></tr>
-                                <tr><td>7° Classificato</td><td>20 rating</td></tr>
-                                <tr><td>8° Classificato</td><td>20 rating</td></tr>
+                                <tr><td>1° Classificato</td><td>100 punti</td></tr>
+                                <tr><td>2° Classificato</td><td>80 punti</td></tr>
+                                <tr><td>3° Classificato</td><td>60 punti</td></tr>
+                                <tr><td>4° Classificato</td><td>50 punti</td></tr>
+                                <tr><td>5° Classificato</td><td>40 punti</td></tr>
+                                <tr><td>6° Classificato</td><td>30 punti</td></tr>
+                                <tr><td>7° Classificato</td><td>20 punti</td></tr>
+                                <tr><td>8° Classificato</td><td>20 punti</td></tr>
                             </tbody>
                         </table>
                     </div>

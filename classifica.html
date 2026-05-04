@@ -4,20 +4,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Classifiche ufficiali della Battlegrounds League">
-    <title>Ranking - Battlegrounds League</title>
+    <meta name="description" content="Classifiche ufficiali della Lega TFT">
+    <title>Ranking - Lega TFT</title>
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://galandar80.github.io/LegaDelloStretto/classifica.html">
-    <meta property="og:title" content="Battlegrounds League - Ranking">
+    <meta property="og:title" content="Lega TFT - Ranking">
     <meta property="og:description"
-        content="Consulta il ranking aggiornato della Battlegrounds League. Scopri chi sono i migliori giocatori di Hearthstone Battlegrounds.">
-    <meta property="og:image" content="https://galandar80.github.io/LegaDelloStretto/assets/img/battlegrounds-league-emblem.png">
+        content="Consulta il ranking aggiornato della Lega TFT. Scopri chi sono i migliori giocatori di Teamfight Tactics.">
+    <meta property="og:image" content="https://galandar80.github.io/LegaDelloStretto/assets/img/tft-league-emblem.svg">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- CSS personalizzato -->
-    <link rel="stylesheet" href="assets/css/hearthstone-styles.css">
-    <link rel="icon" href="assets/img/battlegrounds-league-emblem.png" type="image/png">
+    <link rel="stylesheet" href="assets/css/tft-styles.css">
+    <link rel="icon" href="assets/img/tft-league-emblem.svg" type="image/svg+xml">
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
@@ -29,8 +29,8 @@
     <header class="main-header">
         <div class="container header-container">
             <div class="logo-container">
-                <img src="assets/img/battlegrounds-league-emblem.png" alt="Logo Battlegrounds League" class="logo-img" loading="lazy">
-                <span class="site-title">Battlegrounds League</span>
+                <img src="assets/img/tft-league-emblem.svg" alt="Logo Lega TFT" class="logo-img" loading="lazy">
+                <span class="site-title">Lega TFT</span>
             </div>
             <nav class="main-nav" id="mainNav">
                 <ul class="nav-list">
@@ -54,7 +54,7 @@
     <section class="hero page-hero eventi-hero">
         <div class="hero-content fade-in">
             <h1 class="hero-title">Ranking</h1>
-            <p class="hero-subtitle">Scopri i migliori giocatori della Battlegrounds League</p>
+            <p class="hero-subtitle">Scopri i migliori giocatori della Lega TFT</p>
         </div>
     </section>
 
@@ -68,8 +68,8 @@
             </article>
             <article class="premium-metric-card">
                 <span class="metric-kicker">Formato</span>
-                <strong>MMR + Coppe</strong>
-                <span>Rating stagionale e progressi per coppa</span>
+                <strong>Punti + Coppe</strong>
+                <span>Punteggio stagionale e progressi per coppa</span>
             </article>
             <article class="premium-metric-card">
                 <span class="metric-kicker">Profilo</span>
@@ -84,17 +84,17 @@
                 <article class="podium-card podium-card-second">
                     <div class="podium-rank">2</div>
                     <div class="podium-name">In attesa</div>
-                    <div class="podium-points">0 MMR</div>
+                    <div class="podium-points">0 punti</div>
                 </article>
                 <article class="podium-card podium-card-first">
                     <div class="podium-rank">1</div>
                     <div class="podium-name">In attesa</div>
-                    <div class="podium-points">0 MMR</div>
+                    <div class="podium-points">0 punti</div>
                 </article>
                 <article class="podium-card podium-card-third">
                     <div class="podium-rank">3</div>
                     <div class="podium-name">In attesa</div>
-                    <div class="podium-points">0 MMR</div>
+                    <div class="podium-points">0 punti</div>
                 </article>
             </div>
         </section>
@@ -116,7 +116,7 @@
                             <tr>
                                 <th>Posizione</th>
                                 <th>Giocatore</th>
-                                <th>Rating (MMR)</th>
+                                <th>Punti Lega</th>
                             </tr>
                         </thead>
                         <tbody id="classificaTorneoBody">

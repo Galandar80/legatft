@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <radialGradient id="core" cx="50%" cy="48%" r="52%">
+      <stop offset="0" stop-color="#1ddfff" stop-opacity=".55"/>
+      <stop offset=".36" stop-color="#134b78" stop-opacity=".38"/>
+      <stop offset="1" stop-color="#030714"/>
+    </radialGradient>
+    <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#071a35"/>
+      <stop offset=".5" stop-color="#081025"/>
+      <stop offset="1" stop-color="#15091f"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffe79d"/>
+      <stop offset="1" stop-color="#b77b27"/>
+    </linearGradient>
+    <pattern id="hex" width="156" height="135" patternUnits="userSpaceOnUse" patternTransform="translate(0 20)">
+      <path d="M78 2 153 45v86L78 174 3 131V45Z" fill="none" stroke="#65e7ff" stroke-opacity=".13" stroke-width="2"/>
+    </pattern>
+    <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="18"/>
+    </filter>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#sky)"/>
+  <rect width="1920" height="1080" fill="url(#hex)"/>
+  <rect width="1920" height="1080" fill="url(#core)"/>
+  <ellipse cx="960" cy="650" rx="520" ry="190" fill="#071d37" stroke="#47d9ff" stroke-opacity=".5" stroke-width="5"/>
+  <ellipse cx="960" cy="650" rx="405" ry="145" fill="none" stroke="url(#gold)" stroke-opacity=".82" stroke-width="7"/>
+  <path d="M960 278 1148 386v216L960 710 772 602V386Z" fill="#081528" stroke="#61f0ff" stroke-opacity=".72" stroke-width="6"/>
+  <path d="M960 306 1114 395v178L960 662 806 573V395Z" fill="#0c2c4c" fill-opacity=".84" stroke="#e7bd66" stroke-width="4"/>
+  <path d="M960 345 1050 397v104l-90 52-90-52V397Z" fill="#34d4ff" fill-opacity=".5"/>
+  <path d="M960 345v208M870 397l180 104M1050 397 870 501" stroke="#e9ffff" stroke-opacity=".34" stroke-width="4"/>
+  <g filter="url(#softGlow)" opacity=".7">
+    <circle cx="960" cy="470" r="115" fill="#20e7ff"/>
+    <circle cx="1235" cy="362" r="52" fill="#8d6cff"/>
+    <circle cx="690" cy="708" r="62" fill="#f8c35f"/>
+  </g>
+  <path d="M0 808c290-102 564-102 822 0s548 103 1098-70v342H0Z" fill="#030714" fill-opacity=".72"/>
+  <path d="M0 894c384-80 682-70 953 0 282 73 556 51 967-71v257H0Z" fill="#02040c"/>
+</svg>
