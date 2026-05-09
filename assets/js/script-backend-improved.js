@@ -91,16 +91,17 @@ function esportaTorneoCSV(torneoId) {
     const giocatoriArray = Object.values(giocatori);
     
     // Crea l'intestazione del CSV
-    let csv = 'Nome,Rating,Posizione,Qualificato\n';
+    let csv = 'Nome,Riot ID,Rating,Posizione,Qualificato\n';
     
     // Aggiungi i dati dei giocatori
     giocatoriArray.forEach(giocatore => {
         const nome = giocatore.nome.replace(/,/g, ' ');
+        const riotId = (giocatore.riotId || '').replace(/,/g, ' ');
         const punti = giocatore.punti || 0;
         const posizione = giocatore.posizione || 0;
         const qualificato = giocatore.qualificato ? 'Sì' : 'No';
         
-        csv += `${nome},${punti},${posizione},${qualificato}\n`;
+        csv += `${nome},${riotId},${punti},${posizione},${qualificato}\n`;
     });
     
     // Crea un blob e un link per il download
@@ -144,6 +145,7 @@ function generaReportTorneo(torneoId) {
                 <tr>
                     <th>Pos.</th>
                     <th>Giocatore</th>
+                    <th>Riot ID</th>
                     <th>Rating</th>
                     <th>Qualificato</th>
                 </tr>
@@ -156,6 +158,7 @@ function generaReportTorneo(torneoId) {
             <tr>
                 <td>${index + 1}</td>
                 <td>${giocatore.nome}</td>
+                <td>${giocatore.riotId || '-'}</td>
                 <td>${giocatore.punti || 0}</td>
                 <td>${giocatore.qualificato ? 'Sì' : 'No'}</td>
             </tr>
@@ -721,6 +724,10 @@ function caricaIscrizioniTorneo(torneoId) {
                             <div class="giocatore-stat-label">Stato</div>
                         </div>
                         <div class="giocatore-stat">
+                            <div class="giocatore-stat-value">${backendHtml(iscrizione.riotId || '-')}</div>
+                            <div class="giocatore-stat-label">Riot ID</div>
+                        </div>
+                        <div class="giocatore-stat">
                             <div class="giocatore-stat-value">${iscrizione.createdAt ? new Date(iscrizione.createdAt).toLocaleDateString() : '-'}</div>
                             <div class="giocatore-stat-label">Data</div>
                         </div>
@@ -750,6 +757,7 @@ function importaIscrittoComeGiocatore(torneoId, uid) {
 
             const nuovoGiocatore = {
                 nome: iscrizione.nickname || iscrizione.displayName || iscrizione.email || 'Giocatore',
+                riotId: iscrizione.riotId || '',
                 punti: 0,
                 posizione: 0,
                 qualificato: false,

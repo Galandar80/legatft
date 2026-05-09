@@ -36,10 +36,12 @@
         const firstName = String(data.firstName || '').trim();
         const lastName = String(data.lastName || '').trim();
         const nickname = String(data.nickname || data.displayName || fallbackNickname(user)).trim();
+        const riotId = String(data.riotId || '').trim();
         const profile = {
             firstName,
             lastName,
             nickname,
+            riotId,
             displayName: nickname || [firstName, lastName].filter(Boolean).join(' ') || fallbackNickname(user),
             email: user.email || '',
             updatedAt: new Date().toISOString()
@@ -136,6 +138,7 @@
             document.getElementById('firstName').required = isRegister;
             document.getElementById('lastName').required = isRegister;
             document.getElementById('nickname').required = isRegister;
+            document.getElementById('riotId').required = isRegister;
             form.querySelector('button[type="submit"]').textContent = isRegister ? 'Registrati' : 'Accedi';
             toggleMode.textContent = isRegister ? 'Hai gia un account? Accedi' : 'Non hai un account? Registrati';
             setMessage(message, '');
@@ -145,6 +148,7 @@
             document.getElementById('profileFirstName').value = profile.firstName || '';
             document.getElementById('profileLastName').value = profile.lastName || '';
             document.getElementById('profileNickname').value = profile.nickname || profile.displayName || '';
+            document.getElementById('profileRiotId').value = profile.riotId || '';
         }
 
         function showLoggedIn(profile) {
@@ -170,7 +174,8 @@
             const profileData = {
                 firstName: document.getElementById('firstName').value.trim(),
                 lastName: document.getElementById('lastName').value.trim(),
-                nickname: document.getElementById('nickname').value.trim()
+                nickname: document.getElementById('nickname').value.trim(),
+                riotId: document.getElementById('riotId').value.trim()
             };
             const email = document.getElementById('accountEmail').value.trim();
             const password = document.getElementById('accountPassword').value;
@@ -220,7 +225,8 @@
                 saveUserProfile(user, {
                     firstName: document.getElementById('profileFirstName').value.trim(),
                     lastName: document.getElementById('profileLastName').value.trim(),
-                    nickname: document.getElementById('profileNickname').value.trim()
+                    nickname: document.getElementById('profileNickname').value.trim(),
+                    riotId: document.getElementById('profileRiotId').value.trim()
                 })
                     .then(profile => {
                         fillProfileForm(profile);
@@ -264,6 +270,7 @@
             firstName: profile.firstName || '',
             lastName: profile.lastName || '',
             nickname: profile.nickname || profile.displayName || fallbackNickname(user),
+            riotId: profile.riotId || '',
             displayName: displayNameFromProfile(profile, user),
             email: user.email || '',
             status: 'confirmed',
