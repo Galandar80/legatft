@@ -266,6 +266,10 @@
         const user = auth.currentUser;
         const profile = await ensureUserProfile(user);
 
+        if (!profile || !profile.riotId) {
+            throw new Error('Devi inserire il tuo Riot ID nel profilo prima di iscriverti.');
+        }
+
         await database.ref(`iscrizioni/${torneoId}/${user.uid}`).set({
             firstName: profile.firstName || '',
             lastName: profile.lastName || '',
