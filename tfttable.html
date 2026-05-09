@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TFT Tournament Manager</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Belanosima:wght@400;600;700&family=Inter:wght@300;400;600;700&family=Metamorphous&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* TFT Premium Palette */
+            --bg-dark: #050614;
+            --bg-deep: #0a0b29;
+            --primary: #f0d88e;      /* Radiant Gold */
+            --primary-glow: rgba(240, 216, 142, 0.4);
+            --secondary: #6347d1;    /* Cosmic Purple */
+            --accent: #00d1ff;       /* Hextech Cyan */
+            --accent-glow: rgba(0, 209, 255, 0.4);
+            --text-main: #f0f4ff;
+            --text-muted: #8492a6;
+            --border-gold: #c5a059;
+            --glass: rgba(15, 23, 42, 0.6);
+            --glass-bright: rgba(30, 41, 59, 0.8);
+            
+            /* UI Settings */
+            --card-radius: 12px;
+            --transition-smooth: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            --shadow-premium: 0 20px 50px rgba(0, 0, 0, 0.8);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            cursor: default;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+            /* Animated Mesh Gradient Background */
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(99, 71, 209, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(0, 209, 255, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(5, 6, 20, 1) 0%, #050614 100%);
+            background-attachment: fixed;
+            position: relative;
+        }
+
+        /* Subtle scanlines or grid for digital feel */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.01) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.01) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        h1, h2, h3, .font-fantasy {
+            font-family: 'Metamorphous', serif;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--primary);
+            text-shadow: 0 0 15px rgba(240, 216, 142, 0.3);
+        }
+
+        /* Layout */
+        .app-container {
+            max-width: 1240px;
+            margin: 0 auto;
+            padding: 30px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            z-index: 1;
+            position: relative;
+        }
+
+        header {
+            text-align: center;
+            padding-bottom: 50px;
+        }
+
+        header h1 {
+            font-size: 3.2rem;
+            margin-bottom: 30px;
+            background: linear-gradient(to bottom, #fff, var(--primary), #c5a059);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 20px rgba(240, 216, 142, 0.2));
+            animation: titlePulse 4s infinite ease-in-out;
+        }
+
+        @keyframes titlePulse {
+            0%, 100% { filter: drop-shadow(0 0 15px rgba(240, 216, 142, 0.1)); transform: scale(1); }
+            50% { filter: drop-shadow(0 0 30px rgba(240, 216, 142, 0.4)); transform: scale(1.02); }
+        }
+
+        /* Nav Tabs Redesign */
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+            perspective: 1000px;
+        }
+
+        .nav-tab {
+            padding: 12px 30px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-muted);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 4px;
+            transition: var(--transition-smooth);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+        }
+
+        .nav-tab::before {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; width: 100%; height: 2px;
+            background: var(--accent);
+            transform: translateX(-100%);
+            transition: var(--transition-smooth);
+        }
+
+        .nav-tab:hover {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--accent-glow);
+            transform: translateY(-2px);
+        }
+
+        .nav-tab.active {
+            background: rgba(99, 71, 209, 0.2);
+            color: var(--accent);
+            border-color: var(--accent);
+            box-shadow: 0 0 20px rgba(0, 209, 255, 0.2);
+        }
+
+        .nav-tab.active::before {
+            transform: translateX(0);
+        }
+
+        /* Premium Card Panels */
+        .card-panel {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: var(--card-radius);
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow-premium);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Hextech UI Ornaments (Wired look) */
+        .card-panel::after, .card-panel::before {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            pointer-events: none;
+            border-color: var(--accent);
+            border-style: solid;
+            opacity: 0.6;
+        }
+
+        /* Top Left Ornament */
+        .card-panel::before {
+            top: -2px; left: -2px;
+            border-width: 2px 0 0 2px;
+            clip-path: polygon(0 0, 100% 0, 100% 2px, 2px 2px, 2px 100%, 0 100%);
+            border-radius: var(--card-radius) 0 0 0;
+            box-shadow: -5px -5px 15px rgba(0, 209, 255, 0.2);
+        }
+
+        /* Bottom Right Ornament */
+        .card-panel::after {
+            bottom: -2px; right: -2px;
+            border-width: 0 2px 2px 0;
+            clip-path: polygon(100% 100%, 0 100%, 0 calc(100% - 2px), calc(100% - 2px) calc(100% - 2px), calc(100% - 2px) 0, 100% 0);
+            border-radius: 0 0 var(--card-radius) 0;
+            box-shadow: 5px 5px 15px rgba(0, 209, 255, 0.2);
+        }
+
+        /* Decorative glowing dots for ornaments */
+        .card-panel-br-ornament::after {
+            content: '';
+            position: absolute;
+            top: 10px; right: 10px;
+            width: 4px; height: 4px;
+            background: var(--accent);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent);
+            animation: pulseGlow 3s infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+
+        .card-panel h2, .card-panel h3 {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-panel h2::before {
+            content: '';
+            width: 4px; height: 1.2em;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        /* Inputs & Controls */
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: var(--accent);
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            transition: var(--transition-smooth);
+            outline: none;
+        }
+
+        input:focus {
+            border-color: var(--accent);
+            background: rgba(0, 209, 255, 0.05);
+            box-shadow: 0 0 15px rgba(0, 209, 255, 0.1);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 14px 28px;
+            border-radius: 6px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: var(--transition-smooth);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, #c5a059 100%);
+            color: #1a1a1a;
+            box-shadow: 0 4px 15px rgba(240, 216, 142, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(240, 216, 142, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-danger:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: #ef4444;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
+        }
+
+        /* Tables Premium */
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 8px;
+            margin-top: 10px;
+        }
+
+        th {
+            text-align: left;
+            color: var(--text-muted);
+            padding: 15px 20px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        td {
+            padding: 18px 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: var(--transition-smooth);
+        }
+
+        td:first-child { border-left: 1px solid rgba(255, 255, 255, 0.05); border-radius: 8px 0 0 8px; }
+        td:last-child { border-right: 1px solid rgba(255, 255, 255, 0.05); border-radius: 0 8px 8px 0; }
+
+        tr:hover td {
+            background: rgba(0, 209, 255, 0.08);
+            border-color: var(--accent-glow);
+            transform: scale(1.01);
+        }
+
+        /* Ranking Special Styles */
+        tr:nth-child(1) td { background: rgba(240, 216, 142, 0.1) !important; border-color: rgba(240, 216, 142, 0.2); }
+        tr:nth-child(1) .rank-badge { color: gold; text-shadow: 0 0 10px gold; font-weight: 900; }
+
+        /* Sections */
+        .section {
+            display: none;
+            animation: sectionIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes sectionIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* Utility */
+        .hidden { display: none; }
+        
+        .player-tag {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 8px 16px;
+            border-radius: 30px;
+            margin: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: var(--transition-smooth);
+        }
+
+        .player-tag:hover {
+            border-color: var(--accent);
+            background: rgba(0, 209, 255, 0.1);
+        }
+
+        .lobby-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .app-container { padding: 15px; }
+            header h1 { font-size: 2rem; }
+            .nav-tabs { flex-wrap: wrap; }
+            .nav-tab { padding: 10px 20px; font-size: 0.75rem; }
+            .card-panel { padding: 25px; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <header>
+            <h1 id="tournament-title-display">Teamfight Tactics Tournament</h1>
+            <div class="nav-tabs">
+                <div class="nav-tab active" onclick="showSection('config')">Configurazione</div>
+                <div class="nav-tab" onclick="showSection('players')">Giocatori</div>
+                <div class="nav-tab" onclick="showSection('rounds')">Round</div>
+                <div class="nav-tab" onclick="showSection('leaderboard')">Classifica</div>
+            </div>
+        </header>
+
+        <main id="main-content">
+            <!-- CONFIG SECTION -->
+            <section id="config" class="section active">
+                <div class="card-panel card-panel-br-ornament">
+                    <h2 class="font-fantasy">Parametri Torneo</h2>
+                    <div class="input-group">
+                        <label for="tournament-name">Nome Torneo</label>
+                        <input type="text" id="tournament-name" placeholder="Es. Grand Masters 2026">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div class="input-group">
+                            <label for="total-rounds">Numero Round</label>
+                            <input type="number" id="total-rounds" min="1" value="1">
+                        </div>
+                        <div class="input-group">
+                            <label for="lobbies-per-round">Lobby per Round</label>
+                            <input type="number" id="lobbies-per-round" min="1" value="1">
+                        </div>
+                    </div>
+                    <div class="btn-group" style="display: flex; gap: 10px; margin-top: 20px;">
+                        <button class="btn btn-primary" onclick="initTournament()">Inizializza / Aggiorna Torneo</button>
+                    </div>
+                </div>
+
+                <div class="card-panel card-panel-br-ornament">
+                    <h2 class="font-fantasy">Gestione Dati</h2>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="btn btn-secondary" onclick="saveTournament()">Salva Torneo</button>
+                        <button class="btn btn-secondary" onclick="loadTournament()">Carica Torneo</button>
+                        <button class="btn btn-danger" onclick="resetTournament()">Reset Totale</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PLAYERS SECTION -->
+            <section id="players" class="section">
+                <div class="card-panel card-panel-br-ornament">
+                    <h2 class="font-fantasy">Aggiungi Giocatore</h2>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="new-player-name" placeholder="Nome giocatore..." onkeyup="if(event.key==='Enter') addPlayer()">
+                        <button class="btn btn-primary" onclick="addPlayer()">Aggiungi</button>
+                    </div>
+                </div>
+
+                <div class="card-panel card-panel-br-ornament">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                        <h2 class="font-fantasy">Lista Giocatori (<span id="player-count">0</span>)</h2>
+                        <div style="display: flex; gap: 10px; flex-grow: 1; max-width: 400px;">
+                            <input type="text" id="search-player" placeholder="Cerca giocatore..." oninput="renderPlayers()" style="padding: 10px;">
+                            <button class="btn btn-secondary btn-sm" onclick="autoDistributePlayers()">Matchmaking Auto.</button>
+                        </div>
+                    </div>
+                    <div id="players-list-container" style="display: flex; flex-wrap: wrap;">
+                        <!-- Players will be rendered here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- ROUNDS SECTION -->
+            <section id="rounds" class="section">
+                <div class="card-panel card-panel-br-ornament" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <h2 class="font-fantasy">Round</h2>
+                        <select id="round-selector" onchange="renderRoundView()" style="width: auto;">
+                            <!-- Options will be generated -->
+                        </select>
+                        <input type="text" id="round-name-edit" placeholder="Nome Round" onchange="updateRoundName(this.value)" style="width: 150px; padding: 8px;">
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-secondary" onclick="duplicatePreviousRound()" title="Copia lobby dal round precedente">Duplica Struttura</button>
+                        <button class="btn btn-primary" onclick="autoFillPoints()">Compila punti automatici</button>
+                        <button class="btn btn-secondary" onclick="togglePointsTableModal()">Imposta Punteggi</button>
+                    </div>
+                </div>
+
+                <div id="round-notes-container" class="card-panel card-panel-br-ornament" style="padding: 15px; margin-bottom: 20px;">
+                    <label for="round-notes">Note Round</label>
+                    <textarea id="round-notes" rows="2" placeholder="Annotazioni per questo round..." onchange="updateRoundNotes(this.value)"></textarea>
+                </div>
+
+                <div id="lobbies-container" class="lobby-grid">
+                    <!-- Lobbies will be rendered here -->
+                </div>
+            </section>
+
+            <!-- LEADERBOARD SECTION -->
+            <section id="leaderboard" class="section">
+                <div class="card-panel card-panel-br-ornament">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+                        <h2 class="font-fantasy">Classifica Generale</h2>
+                        <div style="display: flex; gap: 10px; flex-grow: 1; max-width: 300px;">
+                            <input type="text" id="filter-leaderboard" placeholder="Filtra classifica..." oninput="renderLeaderboard()" style="padding: 10px;">
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn btn-secondary" onclick="exportCSV()">Esporta CSV</button>
+                            <button class="btn btn-secondary" onclick="copyToClipboard()">Copia Testo</button>
+                            <button class="btn btn-secondary" onclick="window.print()">Stampa</button>
+                        </div>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table id="leaderboard-table">
+                            <thead>
+                                <tr>
+                                    <th>Pos</th>
+                                    <th>Giocatore</th>
+                                    <th>Punti Tot</th>
+                                    <th>Media</th>
+                                    <th>Best</th>
+                                    <th>Top Finishes</th>
+                                    <th>Storico Round</th>
+                                </tr>
+                            </thead>
+                            <tbody id="leaderboard-body">
+                                <!-- Leaderboard data -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- POINTS TABLE MODAL -->
+    <div id="points-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:2000; align-items:center; justify-content:center; backdrop-filter: blur(5px);">
+        <div class="card-panel" style="width: 90%; max-width: 400px; border: 1px solid var(--accent);">
+            <h2 class="font-fantasy" style="margin-bottom:20px;">Tabella Punti Automatica</h2>
+            <div id="points-inputs-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                <!-- Points inputs -->
+            </div>
+            <div style="margin-top:20px; display:flex; gap:10px;">
+                <button class="btn btn-primary" style="flex:1;" onclick="togglePointsTableModal()">Salva e Chiudi</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // STATE MANAGEMENT
+        let state = {
+            config: {
+                name: "Teamfight Tactics Tournament",
+                totalRounds: 3,
+                lobbiesPerRound: 1
+            },
+            players: [],
+            rounds: [],
+            pointsTable: [8, 7, 6, 5, 4, 3, 2, 0] // Standard TFT points
+        };
+
+        const el = {
+            tournamentTitle: document.getElementById('tournament-title-display'),
+            tournamentNameInput: document.getElementById('tournament-name'),
+            totalRoundsInput: document.getElementById('total-rounds'),
+            lobbiesPerRoundInput: document.getElementById('lobbies-per-round'),
+            playerCount: document.getElementById('player-count'),
+            playersList: document.getElementById('players-list-container'),
+            roundSelector: document.getElementById('round-selector'),
+            lobbiesContainer: document.getElementById('lobbies-container'),
+            leaderboardBody: document.getElementById('leaderboard-body'),
+            searchPlayer: document.getElementById('search-player'),
+            filterLeaderboard: document.getElementById('filter-leaderboard'),
+            roundNameEdit: document.getElementById('round-name-edit'),
+            roundNotes: document.getElementById('round-notes'),
+            pointsInputsGrid: document.getElementById('points-inputs-grid')
+        };
+
+        function initTournament() {
+            const name = el.tournamentNameInput.value || "Teamfight Tactics Tournament";
+            const roundsNum = parseInt(el.totalRoundsInput.value) || 1;
+            const lobbiesNum = parseInt(el.lobbiesPerRoundInput.value) || 1;
+
+            state.config = { name, totalRounds: roundsNum, lobbiesPerRound: lobbiesNum };
+            el.tournamentTitle.textContent = name;
+
+            // Maintain existing rounds if possible, or add/remove
+            while (state.rounds.length < roundsNum) {
+                const nextId = state.rounds.length + 1;
+                state.rounds.push({ id: nextId, name: `Round ${nextId}`, lobbies: [], notes: "" });
+            }
+            if (state.rounds.length > roundsNum) {
+                state.rounds = state.rounds.slice(0, roundsNum);
+            }
+
+            // Ensure each round has correct number of lobbies
+            state.rounds.forEach(round => {
+                while (round.lobbies.length < lobbiesNum) {
+                    const nextId = round.lobbies.length + 1;
+                    round.lobbies.push({ id: nextId, results: [] });
+                }
+                if (round.lobbies.length > lobbiesNum) {
+                    round.lobbies = round.lobbies.slice(0, lobbiesNum);
+                }
+            });
+
+            updateUI();
+            autoSave();
+            notify("Configurazione aggiornata!");
+        }
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            
+            document.querySelectorAll('.nav-tab').forEach(t => {
+                t.classList.remove('active');
+                const onclickAttr = t.getAttribute('onclick');
+                if (onclickAttr && onclickAttr.includes(`'${sectionId}'`)) t.classList.add('active');
+            });
+
+            if (sectionId === 'rounds') renderRoundView();
+            if (sectionId === 'leaderboard') renderLeaderboard();
+        }
+
+        function addPlayer() {
+            const nameInput = document.getElementById('new-player-name');
+            const name = nameInput.value.trim();
+            if (!name) return;
+            
+            if (state.players.find(p => p.name.toLowerCase() === name.toLowerCase())) {
+                alert("Giocatore già esistente!");
+                return;
+            }
+
+            state.players.push({ id: 'p-' + Date.now(), name: name });
+            nameInput.value = '';
+            renderPlayers();
+            autoSave();
+        }
+
+        function removePlayer(id) {
+            if (!confirm("Rimuovere questo giocatore? Verra rimosso da tutte le lobby.")) return;
+            state.players = state.players.filter(p => p.id !== id);
+            state.rounds.forEach(r => {
+                r.lobbies.forEach(l => {
+                    l.results = l.results.filter(res => res.playerId !== id);
+                });
+            });
+            renderPlayers();
+            autoSave();
+        }
+
+        function renderPlayers() {
+            const search = el.searchPlayer.value.toLowerCase();
+            const filtered = state.players.filter(p => p.name.toLowerCase().includes(search));
+            
+            el.playerCount.textContent = state.players.length;
+            el.playersList.innerHTML = '';
+            filtered.forEach(p => {
+                const div = document.createElement('div');
+                div.className = 'player-tag';
+                div.innerHTML = `
+                    <span>${p.name}</span>
+                    <span style="margin-left:8px; cursor:pointer; color:var(--danger); font-weight:bold;" onclick="removePlayer('${p.id}')">×</span>
+                `;
+                el.playersList.appendChild(div);
+            });
+        }
+
+        function renderRoundView() {
+            const roundsNum = state.config.totalRounds;
+            const currentVal = el.roundSelector.value;
+            el.roundSelector.innerHTML = '';
+            for (let r = 1; r <= roundsNum; r++) {
+                const opt = document.createElement('option');
+                opt.value = r;
+                opt.textContent = state.rounds[r-1]?.name || `Round ${r}`;
+                el.roundSelector.appendChild(opt);
+            }
+            if (currentVal && currentVal <= roundsNum) el.roundSelector.value = currentVal;
+            
+            const selectedRoundId = parseInt(el.roundSelector.value) || 1;
+            const round = state.rounds.find(r => r.id === selectedRoundId);
+            if (!round) return;
+
+            el.roundNameEdit.value = round.name;
+            el.roundNotes.value = round.notes || "";
+
+            el.lobbiesContainer.innerHTML = '';
+            round.lobbies.forEach(lobby => {
+                const panel = document.createElement('div');
+                panel.className = 'card-panel';
+                panel.style.margin = '0';
+                
+                let resultsHtml = '';
+                lobby.results.forEach((res) => {
+                    const player = state.players.find(p => p.id === res.playerId);
+                    const isIncomplete = !res.position;
+                    resultsHtml += `
+                        <div style="display: grid; grid-template-columns: 1fr 60px 60px 30px; gap: 8px; margin-bottom: 8px; align-items: center; ${isIncomplete ? 'background: rgba(244, 67, 54, 0.1); border-radius: 4px;' : ''}">
+                            <span style="padding-left:5px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${player ? player.name : 'Unknown'}">${player ? player.name : '??'}</span>
+                            <input type="number" value="${res.position || ''}" min="1" max="8" placeholder="Pos" onchange="updateResult(${round.id}, ${lobby.id}, '${res.playerId}', 'position', this.value)" style="padding: 6px; text-align:center;">
+                            <input type="number" value="${res.points || 0}" step="any" placeholder="Pts" onchange="updateResult(${round.id}, ${lobby.id}, '${res.playerId}', 'points', this.value)" style="padding: 6px; text-align:center;">
+                            <button class="btn btn-sm" style="padding:4px; background:none; color:var(--danger); border:none;" onclick="removeFromLobby(${round.id}, ${lobby.id}, '${res.playerId}')">×</button>
+                        </div>
+                    `;
+                });
+
+                panel.innerHTML = `
+                    <h3 class="font-fantasy" style="margin-bottom:15px; border-bottom:1px solid var(--border-gold); padding-bottom:5px; font-size:1rem; display:flex; justify-content:space-between;">
+                        <span>Lobby ${lobby.id}</span>
+                        <span style="font-size:0.7rem; color:var(--text-muted)">${lobby.results.length}/8</span>
+                    </h3>
+                    <div id="lobby-${lobby.id}-results">${resultsHtml || '<p style="text-align:center; font-size:0.8rem; color:var(--text-muted)">Nessun giocatore</p>'}</div>
+                    <div style="margin-top:15px;">
+                        <select onchange="addToLobby(${round.id}, ${lobby.id}, this.value); this.value='';" style="padding: 8px; font-size:0.85rem;">
+                            <option value="">+ Aggiungi...</option>
+                            ${state.players.filter(p => !lobby.results.find(r => r.playerId === p.id)).map(p => `<option value="${p.id}">${p.name}</option>`).join('')}
+                        </select>
+                    </div>
+                `;
+                el.lobbiesContainer.appendChild(panel);
+            });
+        }
+
+        function updateRoundName(val) {
+            const rid = parseInt(el.roundSelector.value);
+            const round = state.rounds.find(r => r.id === rid);
+            if (round) {
+                round.name = val;
+                autoSave();
+                // Optionally update selector text without full render
+            }
+        }
+
+        function updateRoundNotes(val) {
+            const rid = parseInt(el.roundSelector.value);
+            const round = state.rounds.find(r => r.id === rid);
+            if (round) {
+                round.notes = val;
+                autoSave();
+            }
+        }
+
+        function addToLobby(roundId, lobbyId, playerId) {
+            if (!playerId) return;
+            const round = state.rounds.find(r => r.id === roundId);
+            const lobby = round.lobbies.find(l => l.id === lobbyId);
+            if (lobby.results.length >= 8) { alert("Lobby piena!"); return; }
+            lobby.results.push({ playerId: playerId, position: null, points: 0 });
+            renderRoundView();
+            autoSave();
+        }
+
+        function removeFromLobby(roundId, lobbyId, playerId) {
+            const round = state.rounds.find(r => r.id === roundId);
+            const lobby = round.lobbies.find(l => l.id === lobbyId);
+            lobby.results = lobby.results.filter(res => res.playerId !== playerId);
+            renderRoundView();
+            autoSave();
+        }
+
+        function updateResult(roundId, lobbyId, playerId, field, value) {
+            const round = state.rounds.find(r => r.id === roundId);
+            const lobby = round.lobbies.find(l => l.id === lobbyId);
+            const result = lobby.results.find(res => res.playerId === playerId);
+            
+            if (field === 'position') {
+                const pos = parseInt(value);
+                if (pos > 0) {
+                    if (pos > 8) { alert("Posizione deve essere tra 1 e 8"); renderRoundView(); return; }
+                    const check = lobby.results.find(res => res.playerId !== playerId && res.position === pos);
+                    if (check) { alert(`Posizione ${pos} già assegnata!`); renderRoundView(); return; }
+                }
+                result.position = pos || null;
+            } else if (field === 'points') {
+                result.points = parseFloat(value) || 0;
+            }
+            autoSave();
+            renderRoundView(); // Visual feedback for incomplete
+        }
+
+        function autoDistributePlayers() {
+            if (state.players.length === 0) return;
+            const rid = parseInt(el.roundSelector.value);
+            const round = state.rounds.find(r => r.id === rid);
+            round.lobbies.forEach(l => l.results = []);
+            const shuffled = [...state.players].sort(() => Math.random() - 0.5);
+            let pIdx = 0;
+            for (let l = 0; l < round.lobbies.length; l++) {
+                for (let i = 0; i < 8 && pIdx < shuffled.length; i++) {
+                    round.lobbies[l].results.push({ playerId: shuffled[pIdx].id, position: null, points: 0 });
+                    pIdx++;
+                }
+            }
+            renderRoundView(); autoSave(); notify("Players distribuiti!");
+        }
+
+        function duplicatePreviousRound() {
+            const cid = parseInt(el.roundSelector.value);
+            if (cid <= 1) return;
+            const current = state.rounds.find(r => r.id === cid);
+            const prev = state.rounds.find(r => r.id === cid - 1);
+            current.lobbies.forEach((lobby, idx) => {
+                if (prev.lobbies[idx]) {
+                    lobby.results = prev.lobbies[idx].results.map(res => ({ playerId: res.playerId, position: null, points: 0 }));
+                }
+            });
+            renderRoundView(); autoSave();
+        }
+
+        function autoFillPoints() {
+            const rid = parseInt(el.roundSelector.value);
+            const round = state.rounds.find(r => r.id === rid);
+            round.lobbies.forEach(l => {
+                l.results.forEach(res => {
+                    if (res.position) res.points = state.pointsTable[res.position - 1] || 0;
+                });
+            });
+            renderRoundView(); autoSave(); notify("Punti inseriti!");
+        }
+
+        function togglePointsTableModal() {
+            const modal = document.getElementById('points-modal');
+            const isOpen = modal.style.display === 'flex';
+            if (!isOpen) {
+                renderPointsInputs();
+                modal.style.display = 'flex';
+            } else {
+                modal.style.display = 'none';
+            }
+        }
+
+        function renderPointsInputs() {
+            el.pointsInputsGrid.innerHTML = '';
+            for (let i = 1; i <= 8; i++) {
+                const div = document.createElement('div');
+                div.innerHTML = `<label>${i}° Posto</label><input type="number" value="${state.pointsTable[i-1]}" onchange="state.pointsTable[${i-1}] = parseFloat(this.value) || 0; autoSave();">`;
+                el.pointsInputsGrid.appendChild(div);
+            }
+        }
+
+        function renderLeaderboard() {
+            const filter = el.filterLeaderboard.value.toLowerCase();
+            const standings = state.players.map(player => {
+                let total = 0, pts = [], pos = [], t1 = 0, t2 = 0, t3 = 0, t4 = 0;
+                state.rounds.forEach(r => {
+                    let rPts = 0;
+                    r.lobbies.forEach(l => {
+                        const res = l.results.find(rs => rs.playerId === player.id);
+                        if (res) {
+                            rPts += res.points;
+                            if (res.position) {
+                                pos.push(res.position);
+                                if (res.position === 1) t1++;
+                                if (res.position === 2) t2++;
+                                if (res.position === 3) t3++;
+                                if (res.position === 4) t4++;
+                            }
+                        }
+                    });
+                    pts.push(rPts); total += rPts;
+                });
+                const best = pos.length ? Math.min(...pos) : '-';
+                return { id: player.id, name: player.name, total, avg: pos.length ? (total / pos.length).toFixed(1) : '0', pts, top: `${t1}/${t2}/${t3}/${t4}`, best };
+            })
+            .filter(s => s.name.toLowerCase().includes(filter))
+            .sort((a,b) => b.total - a.total || parseFloat(b.avg) - parseFloat(a.avg));
+
+            el.leaderboardBody.innerHTML = standings.map((s, idx) => `
+                <tr>
+                    <td><span class="rank-badge" style="${idx<3 ? 'background:var(--accent); color:white; padding:2px 8px; border-radius:50%;' : ''}">${idx+1}</span></td>
+                    <td style="font-weight:600;">${s.name}</td>
+                    <td style="color:var(--primary); font-weight:700;">${s.total}</td>
+                    <td>${s.avg}</td>
+                    <td>${s.best}</td>
+                    <td style="font-size:0.85rem;">Top 4: ${s.top}</td>
+                    <td style="font-size:0.75rem; color:var(--text-muted)">${s.pts.join(' | ')}</td>
+                </tr>
+            `).join('');
+        }
+
+        function autoSave() { localStorage.setItem('tft_tournament', JSON.stringify(state)); }
+        
+        function saveTournament() { autoSave(); notify("Salvato!"); }
+
+        function loadTournament() {
+            const d = localStorage.getItem('tft_tournament');
+            if (d) { 
+                state = JSON.parse(d); 
+                el.tournamentNameInput.value = state.config.name;
+                el.totalRoundsInput.value = state.config.totalRounds;
+                el.lobbiesPerRoundInput.value = state.config.lobbiesPerRound;
+                updateUI(); notify("Caricato!"); 
+            }
+        }
+
+        function resetTournament() { if (confirm("Reset totale?")) { localStorage.removeItem('tft_tournament'); location.reload(); } }
+
+        function updateUI() {
+            el.tournamentTitle.textContent = state.config.name;
+            renderPlayers();
+            renderRoundView();
+            renderLeaderboard();
+        }
+
+        function calculateStandings() {
+            return state.players.map(p => {
+                let t = 0, count = 0;
+                state.rounds.forEach(r => r.lobbies.forEach(l => {
+                    const rs = l.results.find(x => x.playerId === p.id);
+                    if (rs) { t += rs.points; count++; }
+                }));
+                return { name: p.name, total: t, avg: count ? (t/count).toFixed(1) : 0 };
+            }).sort((a,b) => b.total - a.total);
+        }
+
+        function exportCSV() {
+            const s = calculateStandings();
+            const csv = "Nome,Punti,Media\n" + s.map(x => `${x.name},${x.total},${x.avg}`).join("\n");
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = 'leaderboard.csv'; a.click();
+        }
+
+        function copyToClipboard() {
+            const s = calculateStandings();
+            const txt = `🏆 ${state.config.name}\n` + s.map((x,i) => `${i+1}. ${x.name}: ${x.total} pts (Avg: ${x.avg})`).join("\n");
+            navigator.clipboard.writeText(txt).then(() => notify("Copiato!"));
+        }
+
+        function notify(m) {
+            const t = document.createElement('div');
+            t.className = 'card-panel';
+            t.style = 'position:fixed; bottom:30px; right:30px; z-index:3000; padding:15px 30px; border:1px solid var(--accent); background:var(--bg-panel); color:var(--text-main); backdrop-filter: blur(20px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); pointer-events:none;';
+            t.innerHTML = `<span style="color:var(--accent); margin-right:10px;">⚡</span> ${m}`;
+            document.body.appendChild(t);
+            setTimeout(() => {
+                t.style.opacity = '0';
+                t.style.transform = 'translateY(20px)';
+                t.style.transition = 'all 0.5s ease';
+                setTimeout(() => t.remove(), 500);
+            }, 3000);
+        }
+
+        window.onload = loadTournament;
+    </script>
+</body>
+</html>
