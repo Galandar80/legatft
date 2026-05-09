@@ -264,10 +264,19 @@
         }
 
         const user = auth.currentUser;
-        const profile = await ensureUserProfile(user);
+        let profile = await ensureUserProfile(user);
 
+        // Se manca il Riot ID, chiedilo direttamente all'utente
         if (!profile || !profile.riotId) {
-            throw new Error('Devi inserire il tuo Riot ID nel profilo prima di iscriverti.');
+            const promptMsg = "Per iscriverti ai tornei della Lega TFT è necessario inserire il tuo Riot ID (es. NomeUtente#Tag):";
+            const enteredRiotId = window.prompt(promptMsg);
+            
+            if (!enteredRiotId || !enteredRiotId.trim()) {
+                throw new Error('Il Riot ID è obbligatorio per partecipare ai tornei.');
+            }
+            
+            // Salva il Riot ID nel profilo e aggiorna la variabile locale
+            profile = await saveUserProfile(user, { riotId: enteredRiotId.trim() });
         }
 
         await database.ref(`iscrizioni/${torneoId}/${user.uid}`).set({
