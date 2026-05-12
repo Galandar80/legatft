@@ -20,13 +20,20 @@
         .admin-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
         .admin-panel { background: #2d1b4d; border: 1px solid rgba(243, 206, 52, 0.3); border-radius: 8px; padding: 20px; }
         .toolbar { display: grid; grid-template-columns: minmax(220px, 1fr) minmax(180px, auto) auto; gap: 10px; align-items: center; }
-        .lobby-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+        .round-tools { display: grid; grid-template-columns: minmax(180px, 1fr) minmax(180px, 1fr) repeat(3, auto); gap: 10px; align-items: center; margin-bottom: 14px; }
+        .lobby-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px; }
         .lobby-card { background: rgba(0, 0, 0, 0.26); border: 1px solid rgba(243, 206, 52, 0.24); border-radius: 8px; padding: 14px; display: grid; gap: 12px; }
         .lobby-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
         .lobby-title { font-weight: 800; color: #f3ce34; }
-        .player-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+        .player-row { display: grid; grid-template-columns: minmax(0, 1fr) 74px 82px auto; gap: 8px; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
         .player-row:last-child { border-bottom: 0; }
         .player-meta { color: #d8c8ef; font-size: 0.85rem; overflow-wrap: anywhere; }
+        .score-input { width: 100%; padding: 9px; text-align: center; }
+        .score-label { color: #d8c8ef; font-size: 0.72rem; font-weight: 800; text-transform: uppercase; }
+        .score-cell { display: grid; gap: 4px; }
+        .round-totals { display: grid; gap: 8px; margin-bottom: 16px; }
+        .totals-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 8px; }
+        .total-pill { background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(243, 206, 52, 0.18); border-radius: 6px; padding: 10px; display: flex; justify-content: space-between; gap: 10px; }
         .empty-state { color: #d8c8ef; padding: 12px 0; }
         input, select { background: #1a0a2e; border: 1px solid #f3ce34; color: #fff; padding: 12px; border-radius: 4px; min-width: 0; }
         button, .btn-link { background: #f3ce34; color: #000; border: none; padding: 10px 14px; border-radius: 4px; font-weight: 800; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
@@ -34,7 +41,10 @@
         .danger { background: #dc3545; color: #fff; }
         .small-button { padding: 7px 9px; }
         @media (max-width: 760px) {
-            .toolbar { grid-template-columns: 1fr; }
+            .toolbar, .round-tools { grid-template-columns: 1fr; }
+            .lobby-grid { grid-template-columns: 1fr; }
+            .player-row { grid-template-columns: 1fr 1fr; }
+            .player-row > div:first-child { grid-column: 1 / -1; }
             button, .btn-link { justify-content: center; }
         }
     </style>
@@ -61,8 +71,14 @@
         </section>
 
         <section class="admin-panel" id="roundPanel" style="display:none;">
-            <div class="toolbar">
+            <div class="round-tools">
                 <select id="roundSelect" aria-label="Seleziona round"></select>
+                <input type="text" id="roundEditName" placeholder="Nome round selezionato">
+                <button id="renameRoundButton" type="button"><i class="fas fa-pen"></i> Salva nome</button>
+                <button id="deleteRoundButton" type="button" class="danger"><i class="fas fa-trash"></i> Elimina round</button>
+                <button id="publishTotalsButton" type="button" class="secondary"><i class="fas fa-ranking-star"></i> Aggiorna punti torneo</button>
+            </div>
+            <div class="toolbar" style="grid-template-columns:minmax(220px, 1fr) auto;">
                 <input type="text" id="lobbyName" placeholder="Nome lobby (es. Lobby A)">
                 <button id="createLobbyButton" type="button"><i class="fas fa-plus"></i> Crea lobby</button>
             </div>
@@ -70,6 +86,7 @@
 
         <section class="admin-panel">
             <div id="statusMessage" class="empty-state">Seleziona un torneo per gestire round e lobby.</div>
+            <div id="roundTotals" class="round-totals"></div>
             <div id="lobbyGrid" class="lobby-grid"></div>
         </section>
     </main>
@@ -95,12 +112,31 @@
             return player.riotId ? `Riot ID: ${player.riotId}` : 'Riot ID non presente';
         }
 
+        function lobbyPlayerIds(lobby) {
+            return Array.from(new Set([
+                ...Object.keys(lobby?.playerIds || {}),
+                ...Object.keys(lobby?.results || {})
+            ]));
+        }
+
         function selectedPlayerIds(round) {
             const ids = new Set();
             Object.values(round?.lobbies || {}).forEach(lobby => {
-                Object.keys(lobby.playerIds || {}).forEach(id => ids.add(id));
+                lobbyPlayerIds(lobby).forEach(id => ids.add(id));
             });
             return ids;
+        }
+
+        function playerRoundTotals(round) {
+            const totals = {};
+            Object.values(round?.lobbies || {}).forEach(lobby => {
+                Object.entries(lobby.results || {}).forEach(([playerId, result]) => {
+                    if (!totals[playerId]) totals[playerId] = { points: 0, rounds: 0 };
+                    totals[playerId].points += Number(result.points) || 0;
+                    totals[playerId].rounds += 1;
+                });
+            });
+            return totals;
         }
 
         function setStatus(text) {
@@ -151,6 +187,7 @@
             if (entries.length === 0) {
                 select.innerHTML = '<option value="">Nessun round creato</option>';
                 currentRoundId = '';
+                document.getElementById('roundEditName').value = '';
                 return;
             }
             entries.forEach(([id, round]) => {
@@ -163,11 +200,14 @@
                 currentRoundId = entries[0][0];
             }
             select.value = currentRoundId;
+            document.getElementById('roundEditName').value = currentRounds[currentRoundId]?.name || '';
         }
 
         function renderLobbies() {
             const grid = document.getElementById('lobbyGrid');
+            const totalsContainer = document.getElementById('roundTotals');
             grid.innerHTML = '';
+            totalsContainer.innerHTML = '';
 
             if (!currentTournamentId) return;
             if (Object.keys(currentPlayers).length === 0) {
@@ -182,11 +222,12 @@
             const round = currentRounds[currentRoundId] || {};
             const lobbies = Object.entries(round.lobbies || {}).sort((a, b) => (a[1].createdAt || '').localeCompare(b[1].createdAt || ''));
             setStatus(lobbies.length ? `Round attivo: ${round.name || 'Round'}` : 'Crea una lobby per questo round.');
+            renderRoundTotals(round);
             if (lobbies.length === 0) return;
 
             const alreadySelected = selectedPlayerIds(round);
             lobbies.forEach(([lobbyId, lobby]) => {
-                const assignedIds = Object.keys(lobby.playerIds || {});
+                const assignedIds = lobbyPlayerIds(lobby);
                 const card = document.createElement('article');
                 card.className = 'lobby-card';
                 const options = Object.entries(currentPlayers)
@@ -203,12 +244,21 @@
                     <div>
                         ${assignedIds.length ? assignedIds.map(playerId => {
                             const player = currentPlayers[playerId] || {};
+                            const result = lobby.results?.[playerId] || {};
                             return `
                                 <div class="player-row">
                                     <div>
                                         <strong>${html(playerName(player))}</strong>
                                         <div class="player-meta">${html(playerMeta(player))}</div>
                                     </div>
+                                    <label class="score-cell">
+                                        <span class="score-label">Pos</span>
+                                        <input class="score-input" type="number" min="1" max="8" value="${html(result.position || '')}" data-result-field="position" data-lobby="${html(lobbyId)}" data-player="${html(playerId)}">
+                                    </label>
+                                    <label class="score-cell">
+                                        <span class="score-label">Punti</span>
+                                        <input class="score-input" type="number" value="${html(result.points ?? '')}" data-result-field="points" data-lobby="${html(lobbyId)}" data-player="${html(playerId)}">
+                                    </label>
                                     <button class="small-button danger" type="button" data-remove-player="${html(playerId)}" data-lobby="${html(lobbyId)}"><i class="fas fa-times"></i></button>
                                 </div>`;
                         }).join('') : '<div class="empty-state">Nessun giocatore in questa lobby.</div>'}
@@ -225,6 +275,30 @@
             });
         }
 
+        function renderRoundTotals(round) {
+            const totalsContainer = document.getElementById('roundTotals');
+            const totals = Object.entries(playerRoundTotals(round))
+                .filter(([, total]) => total.rounds > 0)
+                .sort((a, b) => b[1].points - a[1].points || playerName(currentPlayers[a[0]] || {}).localeCompare(playerName(currentPlayers[b[0]] || {}), 'it'));
+
+            if (totals.length === 0) {
+                totalsContainer.innerHTML = '<div class="empty-state">Inserisci posizione e punti nelle lobby per vedere il riepilogo del round.</div>';
+                return;
+            }
+
+            totalsContainer.innerHTML = `
+                <strong>Riepilogo round</strong>
+                <div class="totals-grid">
+                    ${totals.map(([playerId, total], index) => `
+                        <div class="total-pill">
+                            <span>${index + 1}. ${html(playerName(currentPlayers[playerId] || {}))}</span>
+                            <strong>${html(total.points)} pt</strong>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
         function createRound() {
             if (!currentTournamentId) return setStatus('Seleziona prima un torneo.');
             const input = document.getElementById('roundName');
@@ -237,6 +311,28 @@
                 currentRoundId = ref.key;
                 input.value = '';
             }).catch(error => setStatus(`Errore creazione round: ${error.message}`));
+        }
+
+        function renameRound() {
+            if (!currentTournamentId || !currentRoundId) return setStatus('Seleziona un round.');
+            const input = document.getElementById('roundEditName');
+            const name = input.value.trim();
+            if (!name) return setStatus('Il nome del round non puo essere vuoto.');
+
+            database.ref(`tornei/${currentTournamentId}/rounds/${currentRoundId}`).update({ name })
+                .catch(error => setStatus(`Errore rinomina round: ${error.message}`));
+        }
+
+        function deleteRound() {
+            if (!currentTournamentId || !currentRoundId) return setStatus('Seleziona un round.');
+            if (!confirm('Eliminare questo round e tutte le sue lobby?')) return;
+
+            database.ref(`tornei/${currentTournamentId}/rounds/${currentRoundId}`).remove()
+                .then(() => {
+                    currentRoundId = '';
+                    document.getElementById('roundEditName').value = '';
+                })
+                .catch(error => setStatus(`Errore eliminazione round: ${error.message}`));
         }
 
         function createLobby() {
@@ -258,13 +354,28 @@
             const select = document.querySelector(`[data-player-select="${lobbyId}"]`);
             const playerId = select?.value;
             if (!playerId) return;
-            database.ref(`tornei/${currentTournamentId}/rounds/${currentRoundId}/lobbies/${lobbyId}/playerIds/${playerId}`).set(true)
+            database.ref(`tornei/${currentTournamentId}/rounds/${currentRoundId}/lobbies/${lobbyId}`).update({
+                [`playerIds/${playerId}`]: true,
+                [`results/${playerId}/position`]: '',
+                [`results/${playerId}/points`]: 0
+            })
                 .catch(error => setStatus(`Errore assegnazione giocatore: ${error.message}`));
         }
 
         function removePlayer(lobbyId, playerId) {
-            database.ref(`tornei/${currentTournamentId}/rounds/${currentRoundId}/lobbies/${lobbyId}/playerIds/${playerId}`).remove()
+            database.ref(`tornei/${currentTournamentId}/rounds/${currentRoundId}/lobbies/${lobbyId}`).update({
+                [`playerIds/${playerId}`]: null,
+                [`results/${playerId}`]: null
+            })
                 .catch(error => setStatus(`Errore rimozione giocatore: ${error.message}`));
+        }
+
+        function updateResult(lobbyId, playerId, field, value) {
+            const parsed = value === '' ? '' : Number(value);
+            if (value !== '' && Number.isNaN(parsed)) return;
+
+            database.ref(`tornei/${currentTournamentId}/rounds/${currentRoundId}/lobbies/${lobbyId}/results/${playerId}/${field}`).set(parsed)
+                .catch(error => setStatus(`Errore salvataggio risultato: ${error.message}`));
         }
 
         function deleteLobby(lobbyId) {
@@ -273,14 +384,45 @@
                 .catch(error => setStatus(`Errore eliminazione lobby: ${error.message}`));
         }
 
+        function publishTournamentTotals() {
+            if (!currentTournamentId) return setStatus('Seleziona prima un torneo.');
+
+            const totals = {};
+            Object.values(currentRounds || {}).forEach(round => {
+                Object.entries(playerRoundTotals(round)).forEach(([playerId, total]) => {
+                    if (!totals[playerId]) totals[playerId] = 0;
+                    totals[playerId] += total.points;
+                });
+            });
+
+            const ranked = Object.entries(totals)
+                .sort((a, b) => b[1] - a[1] || playerName(currentPlayers[a[0]] || {}).localeCompare(playerName(currentPlayers[b[0]] || {}), 'it'));
+
+            if (ranked.length === 0) return setStatus('Non ci sono punti round da pubblicare.');
+
+            const updates = {};
+            ranked.forEach(([playerId, points], index) => {
+                updates[`tornei/${currentTournamentId}/giocatori/${playerId}/punti`] = points;
+                updates[`tornei/${currentTournamentId}/giocatori/${playerId}/posizione`] = index + 1;
+            });
+
+            database.ref().update(updates)
+                .then(() => setStatus('Punti totali del torneo aggiornati.'))
+                .catch(error => setStatus(`Errore aggiornamento punti torneo: ${error.message}`));
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             loadTournaments();
             document.getElementById('tournamentSelect').addEventListener('change', event => loadTournament(event.target.value));
             document.getElementById('roundSelect').addEventListener('change', event => {
                 currentRoundId = event.target.value;
+                document.getElementById('roundEditName').value = currentRounds[currentRoundId]?.name || '';
                 renderLobbies();
             });
             document.getElementById('createRoundButton').addEventListener('click', createRound);
+            document.getElementById('renameRoundButton').addEventListener('click', renameRound);
+            document.getElementById('deleteRoundButton').addEventListener('click', deleteRound);
+            document.getElementById('publishTotalsButton').addEventListener('click', publishTournamentTotals);
             document.getElementById('createLobbyButton').addEventListener('click', createLobby);
             document.getElementById('lobbyGrid').addEventListener('click', event => {
                 const addButton = event.target.closest('[data-add-player]');
@@ -289,6 +431,11 @@
                 if (addButton) addPlayer(addButton.dataset.addPlayer);
                 if (removeButton) removePlayer(removeButton.dataset.lobby, removeButton.dataset.removePlayer);
                 if (deleteButton) deleteLobby(deleteButton.dataset.deleteLobby);
+            });
+            document.getElementById('lobbyGrid').addEventListener('change', event => {
+                const input = event.target.closest('[data-result-field]');
+                if (!input) return;
+                updateResult(input.dataset.lobby, input.dataset.player, input.dataset.resultField, input.value);
             });
         });
     </script>

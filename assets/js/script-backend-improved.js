@@ -737,10 +737,6 @@ function caricaIscrizioniTorneo(torneoId) {
                             <div class="giocatore-stat-label">Stato</div>
                         </div>
                         <div class="giocatore-stat">
-                            <div class="giocatore-stat-value">${backendHtml(iscrizione.riotId || '-')}</div>
-                            <div class="giocatore-stat-label">Riot ID</div>
-                        </div>
-                        <div class="giocatore-stat">
                             <div class="giocatore-stat-value">${iscrizione.createdAt ? new Date(iscrizione.createdAt).toLocaleDateString() : '-'}</div>
                             <div class="giocatore-stat-label">Data</div>
                         </div>
@@ -770,6 +766,8 @@ function importaIscrittoComeGiocatore(torneoId, uid) {
 
             const nuovoGiocatore = {
                 nome: iscrizione.nickname || iscrizione.displayName || iscrizione.email || 'Giocatore',
+                nickname: iscrizione.nickname || iscrizione.displayName || iscrizione.email || 'Giocatore',
+                displayName: iscrizione.nickname || iscrizione.displayName || iscrizione.email || 'Giocatore',
                 riotId: displayRiotId(iscrizione) === '-' ? '' : displayRiotId(iscrizione),
                 punti: 0,
                 posizione: 0,
@@ -825,13 +823,44 @@ function salvaModificheGiocatore(giocatoreId) {
     
     const updates = {
         nome,
+        nickname: nome,
+        displayName: nome,
         riotId,
         punti,
         posizione: Math.max(0, posizione),
         qualificato: qualificato
     };
-    
-    database.ref(`tornei/${torneoSelezionatoId}/giocatori/${giocatoreId}`).update(updates)
+
+    const playerRef = database.ref(`tornei/${torneoSelezionatoId}/giocatori/${giocatoreId}`);
+
+    playerRef.once('value')
+        .then(snapshot => {
+            const giocatore = snapshot.val() || {};
+            return playerRef.update(updates).then(() => giocatore);
+        })
+        .then(giocatore => {
+            if (!giocatore.userId) return null;
+
+            const mirroredProfile = {
+                nome,
+                nickname: nome,
+                displayName: nome,
+                riotId
+            };
+
+            return Promise.all([
+                database.ref(`iscrizioni/${torneoSelezionatoId}/${giocatore.userId}`).update(mirroredProfile),
+                database.ref(`users/${giocatore.userId}`).update({
+                    nickname: nome,
+                    displayName: nome,
+                    riotId,
+                    updatedAt: new Date().toISOString()
+                }).catch(error => {
+                    console.warn('Profilo utente non aggiornato:', error);
+                    return null;
+                })
+            ]);
+        })
         .then(() => {
             showAlert('Modifiche salvate con successo!');
             caricaGiocatoriTorneo(torneoSelezionatoId);

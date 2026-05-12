@@ -843,7 +843,7 @@
                     let giocatoriArray = Object.entries(giocatori).map(([id, giocatore]) => ({
                         id,
                         type: 'player',
-                        name: giocatore.nome || 'Giocatore',
+                        name: typeof displayPlayerName === 'function' ? displayPlayerName(giocatore) : (giocatore.nome || 'Giocatore'),
                         giocatore
                     }));
 
@@ -901,10 +901,6 @@
                                         <div class="giocatore-stat-label">Stato</div>
                                     </div>
                                     <div class="giocatore-stat">
-                                        <div class="giocatore-stat-value">${iscrizione.riotId || '-'}</div>
-                                        <div class="giocatore-stat-label">Riot ID</div>
-                                    </div>
-                                    <div class="giocatore-stat">
                                         <div class="giocatore-stat-value">${iscrizione.createdAt ? new Date(iscrizione.createdAt).toLocaleDateString() : '-'}</div>
                                         <div class="giocatore-stat-label">Iscritto</div>
                                     </div>
@@ -945,11 +941,11 @@
                                     <div class="giocatore-stat-label">HS</div>
                                 </div>
                             </div>
-                            <div class="flex-group" style="margin-top: 10px;">
-                                <input type="text" id="nome-${giocatoreId}" value="${safePlayerName}" class="small-input" placeholder="Nickname">
-                                <input type="text" id="riot-${giocatoreId}" value="${safeRiotId === '-' ? '' : safeRiotId}" class="small-input" placeholder="Riot ID">
-                                <input type="number" id="punti-${giocatoreId}" value="${giocatore.punti || 0}" class="small-input" placeholder="Punti">
-                                <input type="number" id="posizione-${giocatoreId}" value="${giocatore.posizione || 0}" class="small-input" placeholder="Pos">
+                            <div class="player-edit-grid">
+                                <input type="text" id="nome-${giocatoreId}" value="${safePlayerName}" class="small-input player-name-input" placeholder="Nickname" title="Nickname pubblico">
+                                <input type="text" id="riot-${giocatoreId}" value="${safeRiotId === '-' ? '' : safeRiotId}" class="small-input player-riot-input" placeholder="Riot ID" title="Riot ID">
+                                <input type="number" id="punti-${giocatoreId}" value="${giocatore.punti || 0}" class="small-input player-score-input" placeholder="Punti" title="Punti">
+                                <input type="number" id="posizione-${giocatoreId}" value="${giocatore.posizione || 0}" class="small-input player-rank-input" placeholder="Pos" title="Posizione">
                                 <button onclick="salvaModificheGiocatore('${giocatoreId}')" class="small-button"><i class="fas fa-save"></i></button>
                                 <button onclick="applicaPenalitaAssenza('${giocatoreId}')" class="small-button" title="Assente: -20 punti"><i class="fas fa-user-slash"></i></button>
                                 <button onclick="rimuoviGiocatore('${giocatoreId}')" class="small-button" style="background: #dc3545"><i class="fas fa-trash"></i></button>
