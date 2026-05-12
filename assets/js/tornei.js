@@ -82,26 +82,49 @@ function registrationButton(torneoId, torneo, currentUser, iscrizioni) {
     return `<button class="btn btn-primary tournament-signup-button" type="button" data-tournament-id="${html(torneoId)}">Iscriviti</button>`;
 }
 
-function renderSignupList(torneo, iscrizioni) {
+function tournamentParticipants(torneo, iscrizioni) {
     const byKey = new Map();
 
     Object.entries(iscrizioni || {}).forEach(([uid, iscrizione]) => {
         const name = iscrizione.nickname || iscrizione.displayName || iscrizione.nome || iscrizione.email || 'Giocatore registrato';
-        byKey.set(uid, name);
+        byKey.set(uid, {
+            key: uid,
+            name,
+            createdAt: iscrizione.createdAt || '',
+            source: 'signup'
+        });
     });
 
     Object.values(torneo.giocatori || {}).forEach(giocatore => {
-        const name = giocatore.nome || giocatore.displayName;
+        const name = giocatore.nome || giocatore.nickname || giocatore.displayName;
         if (!name) return;
         const key = giocatore.userId || `manual:${name.toLowerCase()}`;
-        byKey.set(key, name);
+        const existing = byKey.get(key);
+        byKey.set(key, {
+            key,
+            name,
+            createdAt: existing?.createdAt || giocatore.createdAt || '',
+            source: existing?.source || 'player'
+        });
     });
 
-    if (byKey.size === 0) {
+    return Array.from(byKey.values())
+        .sort((a, b) => {
+            const dateCompare = (a.createdAt || '').localeCompare(b.createdAt || '');
+            if (dateCompare !== 0) return dateCompare;
+            return a.name.localeCompare(b.name, 'it');
+        });
+}
+
+function renderSignupList(torneo, iscrizioni) {
+    const participants = tournamentParticipants(torneo, iscrizioni);
+
+    if (participants.length === 0) {
         return '<div class="tournament-signups-empty">Nessun iscritto al momento</div>';
     }
 
-    const names = Array.from(byKey.values())
+    const names = participants
+        .map(participant => participant.name)
         .sort((a, b) => a.localeCompare(b, 'it'));
 
     return `
@@ -110,6 +133,37 @@ function renderSignupList(torneo, iscrizioni) {
             <ul>
                 ${names.map(name => `<li>${html(name)}</li>`).join('')}
             </ul>
+        </div>`;
+}
+
+function renderAutomaticLobbies(torneo, iscrizioni) {
+    const participants = tournamentParticipants(torneo, iscrizioni);
+
+    if (participants.length === 0) {
+        return '';
+    }
+
+    const lobbies = [];
+    for (let index = 0; index < participants.length; index += 8) {
+        lobbies.push(participants.slice(index, index + 8));
+    }
+
+    return `
+        <div class="tournament-auto-lobbies">
+            <strong>Lobby automatiche</strong>
+            <div class="auto-lobbies-grid">
+                ${lobbies.map((lobby, index) => `
+                    <section class="auto-lobby">
+                        <div class="auto-lobby-title">
+                            <span>Lobby ${String.fromCharCode(65 + index)}</span>
+                            <small>${lobby.length}/8</small>
+                        </div>
+                        <ol>
+                            ${lobby.map(player => `<li>${html(player.name)}</li>`).join('')}
+                        </ol>
+                    </section>
+                `).join('')}
+            </div>
         </div>`;
 }
 
@@ -238,6 +292,7 @@ function loadUpcomingTournaments() {
                         ${torneo.linkChallonge ? `<p><strong>Bracket:</strong> <a href="${window.safeURL ? window.safeURL(torneo.linkChallonge) : html(torneo.linkChallonge)}" target="_blank" rel="noopener noreferrer">Challonge</a></p>` : ''}
                     </div>
                     ${renderSignupList(torneo, iscrizioni)}
+                    ${renderAutomaticLobbies(torneo, iscrizioni)}
                     <div class="tournament-action">
                         ${registrationButton(torneoId, torneo, currentUser, iscrizioni)}
                     </div>

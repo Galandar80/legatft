@@ -5479,6 +5479,58 @@ body::after {
     font-size: 0.92rem;
 }
 
+.tournament-auto-lobbies {
+    margin-top: 1rem;
+    padding-top: 0.85rem;
+    border-top: 1px solid rgba(255, 228, 120, 0.18);
+}
+
+.tournament-auto-lobbies > strong {
+    display: block;
+    margin-bottom: 0.65rem;
+    color: var(--hs-gold);
+}
+
+.auto-lobbies-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 0.75rem;
+}
+
+.auto-lobby {
+    padding: 0.75rem;
+    border-radius: 6px;
+    background: rgba(10, 4, 22, 0.46);
+    border: 1px solid rgba(255, 228, 120, 0.16);
+}
+
+.auto-lobby-title {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.75rem;
+    align-items: center;
+    margin-bottom: 0.55rem;
+    color: var(--hs-gold);
+    font-weight: 800;
+}
+
+.auto-lobby-title small {
+    color: rgba(255, 255, 255, 0.72);
+    font-weight: 700;
+}
+
+.auto-lobby ol {
+    display: grid;
+    gap: 0.35rem;
+    margin: 0;
+    padding-left: 1.25rem;
+}
+
+.auto-lobby li {
+    overflow-wrap: anywhere;
+    color: rgba(255, 255, 255, 0.88);
+}
+
 /* Mobile navigation stability pass.
    Keep this late in the file to override older responsive menu experiments. */
 @media (max-width: 1100px) {
