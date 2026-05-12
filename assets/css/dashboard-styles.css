@@ -309,7 +309,7 @@
 /* Giocatori nel torneo */
 .giocatori-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 430px), 1fr));
     gap: var(--spacing-md);
 }
 
@@ -335,22 +335,25 @@
     font-weight: 600;
     font-size: 1.1rem;
     color: var(--text-primary);
+    overflow-wrap: anywhere;
 }
 
 .giocatore-stats {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(68px, 1fr));
+    gap: 10px;
     margin-top: var(--spacing-sm);
-    flex-wrap: wrap; /* Permette il wrapping su schermi piccoli */
 }
 
 .giocatore-stat {
     text-align: center;
+    min-width: 0;
 }
 
 .giocatore-stat-value {
     font-weight: 600;
     color: var(--brand-primary);
+    overflow-wrap: anywhere;
 }
 
 .giocatore-stat-label {
@@ -381,7 +384,7 @@
 
 .player-edit-grid {
     display: grid;
-    grid-template-columns: minmax(220px, 2fr) minmax(190px, 1.4fr) minmax(86px, 0.7fr) minmax(86px, 0.7fr) repeat(3, auto);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) repeat(3, 42px);
     gap: 10px;
     align-items: center;
     margin-top: 12px;
@@ -391,29 +394,42 @@
     width: 100%;
     padding: 10px 12px;
     font-size: 0.95rem;
-}
-
-.player-edit-grid .small-button {
     min-height: 40px;
 }
 
-@media (max-width: 1040px) {
-    .player-edit-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr)) repeat(3, auto);
-    }
+.player-edit-grid .small-button {
+    width: 42px;
+    min-height: 40px;
+    justify-content: center;
+}
 
-    .player-edit-grid .player-name-input,
-    .player-edit-grid .player-riot-input {
-        grid-column: span 2;
+.player-edit-grid .player-name-input,
+.player-edit-grid .player-riot-input {
+    grid-column: 1 / -1;
+}
+
+.player-edit-grid .player-score-input,
+.player-edit-grid .player-rank-input {
+    grid-column: span 1;
+}
+
+@media (max-width: 1040px) {
+    .giocatori-grid {
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr));
+    }
+}
+
+@media (max-width: 760px) {
+    .giocatore-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
 @media (max-width: 640px) {
     .player-edit-grid {
-        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-columns: 1fr 1fr 42px 42px 42px;
     }
 
-    .player-edit-grid .small-input,
     .player-edit-grid .player-name-input,
     .player-edit-grid .player-riot-input {
         grid-column: 1 / -1;
