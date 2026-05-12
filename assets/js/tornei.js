@@ -36,6 +36,19 @@ function isUpcomingTournament(torneo) {
     return date >= today;
 }
 
+function isRegistrationDeadlineOpen(torneo) {
+    const value = torneo.dataInizio || torneo.data || '';
+    if (!value) return true;
+    const eventDate = new Date(value);
+    if (Number.isNaN(eventDate.getTime())) return true;
+    eventDate.setHours(0, 0, 0, 0);
+    const closeDate = new Date(eventDate);
+    closeDate.setDate(closeDate.getDate() - 1);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return today < closeDate;
+}
+
 function renderTournamentEmpty(container, title = 'Nessun torneo programmato') {
     container.innerHTML = `
         <div class="premium-empty" style="grid-column: 1/-1;">
@@ -52,6 +65,10 @@ function registrationButton(torneoId, torneo, currentUser, iscrizioni) {
 
     if (!iscrizioneAperta) {
         return '<button class="btn btn-secondary tournament-signup-button" type="button" disabled>Iscrizioni chiuse</button>';
+    }
+
+    if (!isRegistrationDeadlineOpen(torneo)) {
+        return '<button class="btn btn-secondary tournament-signup-button" type="button" disabled>Iscrizioni chiuse dal giorno prima</button>';
     }
 
     if (!currentUser) {
@@ -77,9 +94,7 @@ function renderSignupList(torneo, iscrizioni) {
         const name = giocatore.nome || giocatore.displayName;
         if (!name) return;
         const key = giocatore.userId || `manual:${name.toLowerCase()}`;
-        if (!byKey.has(key)) {
-            byKey.set(key, name);
-        }
+        byKey.set(key, name);
     });
 
     if (byKey.size === 0) {

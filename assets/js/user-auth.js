@@ -32,11 +32,15 @@
         return profile.nickname || fullNameFromProfile(profile) || fallbackNickname(user);
     }
 
+    function normalizeRiotId(value) {
+        return String(value || '').trim();
+    }
+
     function profileFromUser(user, data = {}) {
         const firstName = String(data.firstName || '').trim();
         const lastName = String(data.lastName || '').trim();
         const nickname = String(data.nickname || data.displayName || fallbackNickname(user)).trim();
-        const riotId = String(data.riotId || '').trim();
+        const riotId = normalizeRiotId(data.riotId);
         const profile = {
             firstName,
             lastName,
@@ -266,29 +270,49 @@
         const user = auth.currentUser;
         let profile = await ensureUserProfile(user);
 
-        // Se manca il Riot ID, chiedilo direttamente all'utente
-        if (!profile || !profile.riotId) {
-            const promptMsg = "Per iscriverti ai tornei della Lega TFT è necessario inserire il tuo Riot ID (es. NomeUtente#Tag):";
+        if (!profile || !normalizeRiotId(profile.riotId)) {
+            const promptMsg = "Per iscriverti ai tornei della Lega TFT e necessario inserire il tuo Riot ID (es. NomeUtente#Tag):";
             const enteredRiotId = window.prompt(promptMsg);
             
             if (!enteredRiotId || !enteredRiotId.trim()) {
-                throw new Error('Il Riot ID è obbligatorio per partecipare ai tornei.');
+                throw new Error('Il Riot ID e obbligatorio per partecipare ai tornei.');
             }
             
-            // Salva il Riot ID nel profilo e aggiorna la variabile locale
             profile = await saveUserProfile(user, { riotId: enteredRiotId.trim() });
+        }
+
+        const tournamentSnapshot = await database.ref(`tornei/${torneoId}`).once('value');
+        const torneo = tournamentSnapshot.val() || {};
+        if (torneo.iscrizioneAperta === false) {
+            throw new Error('Le iscrizioni per questo torneo sono chiuse.');
+        }
+        if (!isRegistrationDeadlineOpen(torneo)) {
+            throw new Error('Le iscrizioni si chiudono il giorno prima dell evento.');
         }
 
         await database.ref(`iscrizioni/${torneoId}/${user.uid}`).set({
             firstName: profile.firstName || '',
             lastName: profile.lastName || '',
             nickname: profile.nickname || profile.displayName || fallbackNickname(user),
-            riotId: profile.riotId || '',
+            riotId: normalizeRiotId(profile.riotId),
             displayName: displayNameFromProfile(profile, user),
             email: user.email || '',
             status: 'confirmed',
             createdAt: new Date().toISOString()
         });
+    }
+
+    function isRegistrationDeadlineOpen(torneo) {
+        const dateValue = torneo.dataInizio || torneo.data || '';
+        if (!dateValue) return true;
+        const eventDate = new Date(dateValue);
+        if (Number.isNaN(eventDate.getTime())) return true;
+        eventDate.setHours(0, 0, 0, 0);
+        const closeDate = new Date(eventDate);
+        closeDate.setDate(closeDate.getDate() - 1);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        return today < closeDate;
     }
 
     async function unsubscribeFromTournament(torneoId) {

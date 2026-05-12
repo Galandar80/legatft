@@ -114,6 +114,7 @@
                     <li><a href="#" id="menuEventi"><i class="fas fa-calendar-alt"></i> Eventi</a></li>
                     <li><a href="#" id="menuCoppe"><i class="fas fa-trophy"></i> Gestione Coppe</a></li>
                     <li><a href="#" id="menuHOF"><i class="fas fa-award"></i> Hall of Fame</a></li>
+                    <li><a href="tfttable.html"><i class="fas fa-table-cells-large"></i> Round e Lobby</a></li>
                     <li><a href="admin-dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a></li>
                     <li><a href="index.html"><i class="fas fa-home"></i> Frontend</a></li>
                 </ul>
@@ -882,12 +883,18 @@
 
                         if (item.type === 'signup') {
                             const iscrizione = item.iscrizione;
+                            const safeSignupName = typeof backendHtml === 'function' ? backendHtml(item.name) : item.name;
+                            const safeSignupRiot = typeof backendHtml === 'function' ? backendHtml(displayRiotId(iscrizione)) : (iscrizione.riotId || '-');
                             card.innerHTML = `
-                                <div class="giocatore-nome">${item.name}</div>
+                                <div class="giocatore-nome">${safeSignupName}</div>
                                 <div class="giocatore-stats">
                                     <div class="giocatore-stat">
                                         <div class="giocatore-stat-value">Online</div>
                                         <div class="giocatore-stat-label">Origine</div>
+                                    </div>
+                                    <div class="giocatore-stat">
+                                        <div class="giocatore-stat-value">${safeSignupRiot}</div>
+                                        <div class="giocatore-stat-label">Riot ID</div>
                                     </div>
                                     <div class="giocatore-stat">
                                         <div class="giocatore-stat-value">${iscrizione.status || 'confirmed'}</div>
@@ -913,9 +920,15 @@
 
                         const giocatoreId = item.id;
                         const giocatore = item.giocatore;
+                        const safePlayerName = typeof backendHtml === 'function' ? backendHtml(displayPlayerName(giocatore)) : (giocatore.nome || 'Giocatore');
+                        const safeRiotId = typeof backendHtml === 'function' ? backendHtml(displayRiotId(giocatore)) : (giocatore.riotId || '-');
                         card.innerHTML = `
-                            <div class="giocatore-nome">${giocatore.nome}</div>
+                            <div class="giocatore-nome">${safePlayerName}</div>
                             <div class="giocatore-stats">
+                                <div class="giocatore-stat">
+                                    <div class="giocatore-stat-value">${safeRiotId}</div>
+                                    <div class="giocatore-stat-label">Riot ID</div>
+                                </div>
                                 <div class="giocatore-stat">
                                     <div class="giocatore-stat-value">${giocatore.punti || 0}</div>
                                     <div class="giocatore-stat-label">Punti</div>
@@ -933,9 +946,12 @@
                                 </div>
                             </div>
                             <div class="flex-group" style="margin-top: 10px;">
+                                <input type="text" id="nome-${giocatoreId}" value="${safePlayerName}" class="small-input" placeholder="Nickname">
+                                <input type="text" id="riot-${giocatoreId}" value="${safeRiotId === '-' ? '' : safeRiotId}" class="small-input" placeholder="Riot ID">
                                 <input type="number" id="punti-${giocatoreId}" value="${giocatore.punti || 0}" class="small-input" placeholder="Punti">
                                 <input type="number" id="posizione-${giocatoreId}" value="${giocatore.posizione || 0}" class="small-input" placeholder="Pos">
                                 <button onclick="salvaModificheGiocatore('${giocatoreId}')" class="small-button"><i class="fas fa-save"></i></button>
+                                <button onclick="applicaPenalitaAssenza('${giocatoreId}')" class="small-button" title="Assente: -20 punti"><i class="fas fa-user-slash"></i></button>
                                 <button onclick="rimuoviGiocatore('${giocatoreId}')" class="small-button" style="background: #dc3545"><i class="fas fa-trash"></i></button>
                             </div>
                         `;
@@ -987,7 +1003,7 @@
     </script>
 
     <!-- Script per funzionalità avanzate -->
-    <script src="assets/js/script-backend-improved.js?v=20260504-coppe-rebuild"></script>
+    <script src="assets/js/script-backend-improved.js?v=20260512-players-lobbies"></script>
     <script src="assets/js/admin-cups.js?v=20260504-rebuild"></script>
 </body>
 

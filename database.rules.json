@@ -10,14 +10,14 @@
     "users": {
       "$uid": {
         ".write": "auth != null && (auth.uid === $uid || auth.token.admin === true || auth.token.email === 'calisma@gmail.com')",
-        ".validate": "newData.hasChildren(['firstName', 'lastName', 'nickname', 'displayName', 'email', 'updatedAt']) && newData.child('firstName').isString() && newData.child('lastName').isString() && newData.child('nickname').isString() && newData.child('displayName').isString() && newData.child('email').isString() && newData.child('updatedAt').isString()"
+        ".validate": "newData.hasChildren(['firstName', 'lastName', 'nickname', 'riotId', 'displayName', 'email', 'updatedAt']) && newData.child('firstName').isString() && newData.child('lastName').isString() && newData.child('nickname').isString() && newData.child('riotId').isString() && newData.child('displayName').isString() && newData.child('email').isString() && newData.child('updatedAt').isString()"
       }
     },
     "iscrizioni": {
       "$torneoId": {
         "$uid": {
           ".write": "auth != null && (auth.token.admin === true || auth.token.email === 'calisma@gmail.com' || (auth.uid === $uid && (!newData.exists() || (root.child('tornei').child($torneoId).exists() && root.child('tornei').child($torneoId).child('iscrizioneAperta').val() !== false))))",
-          ".validate": "newData.hasChildren(['firstName', 'lastName', 'nickname', 'displayName', 'email', 'status', 'createdAt']) && newData.child('firstName').isString() && newData.child('lastName').isString() && newData.child('nickname').isString() && newData.child('displayName').isString() && newData.child('email').isString() && newData.child('createdAt').isString() && (auth.token.admin === true || auth.token.email === 'calisma@gmail.com' || newData.child('status').val() === 'confirmed')"
+          ".validate": "newData.hasChildren(['firstName', 'lastName', 'nickname', 'riotId', 'displayName', 'email', 'status', 'createdAt']) && newData.child('firstName').isString() && newData.child('lastName').isString() && newData.child('nickname').isString() && newData.child('riotId').isString() && newData.child('displayName').isString() && newData.child('email').isString() && newData.child('createdAt').isString() && (auth.token.admin === true || auth.token.email === 'calisma@gmail.com' || newData.child('status').val() === 'confirmed')"
         }
       }
     },

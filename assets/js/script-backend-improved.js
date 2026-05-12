@@ -9,6 +9,14 @@ const backendHtml = value => String(value ?? '')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
 
+function displayPlayerName(giocatore) {
+    return giocatore.nome || giocatore.nickname || giocatore.displayName || 'Giocatore';
+}
+
+function displayRiotId(record) {
+    return record.riotId || record.riotID || record.riot || '-';
+}
+
 // Funzione per generare grafici di analisi per un torneo specifico
 function generaGraficiTorneo(torneoId) {
     const torneo = torneiData[torneoId];
@@ -95,8 +103,8 @@ function esportaTorneoCSV(torneoId) {
     
     // Aggiungi i dati dei giocatori
     giocatoriArray.forEach(giocatore => {
-        const nome = giocatore.nome.replace(/,/g, ' ');
-        const riotId = (giocatore.riotId || '').replace(/,/g, ' ');
+        const nome = displayPlayerName(giocatore).replace(/,/g, ' ');
+        const riotId = displayRiotId(giocatore).replace(/,/g, ' ');
         const punti = giocatore.punti || 0;
         const posizione = giocatore.posizione || 0;
         const qualificato = giocatore.qualificato ? 'Sì' : 'No';
@@ -715,10 +723,15 @@ function caricaIscrizioniTorneo(torneoId) {
                 const card = document.createElement('div');
                 card.className = 'giocatore-card';
                 const safeName = backendHtml(iscrizione.nickname || iscrizione.displayName || iscrizione.email || 'Utente registrato');
+                const safeRiotId = backendHtml(displayRiotId(iscrizione));
                 const safeStatus = backendHtml(iscrizione.status || 'confirmed');
                 card.innerHTML = `
                     <div class="giocatore-nome">${safeName}</div>
                     <div class="giocatore-stats">
+                        <div class="giocatore-stat">
+                            <div class="giocatore-stat-value">${safeRiotId}</div>
+                            <div class="giocatore-stat-label">Riot ID</div>
+                        </div>
                         <div class="giocatore-stat">
                             <div class="giocatore-stat-value">${safeStatus}</div>
                             <div class="giocatore-stat-label">Stato</div>
@@ -757,7 +770,7 @@ function importaIscrittoComeGiocatore(torneoId, uid) {
 
             const nuovoGiocatore = {
                 nome: iscrizione.nickname || iscrizione.displayName || iscrizione.email || 'Giocatore',
-                riotId: iscrizione.riotId || '',
+                riotId: displayRiotId(iscrizione) === '-' ? '' : displayRiotId(iscrizione),
                 punti: 0,
                 posizione: 0,
                 qualificato: false,
@@ -802,9 +815,18 @@ function salvaModificheGiocatore(giocatoreId) {
     const punti = parseInt(document.getElementById(`punti-${giocatoreId}`).value) || 0;
     const posizione = parseInt(document.getElementById(`posizione-${giocatoreId}`).value) || 0;
     const qualificato = document.getElementById(`qualificato-${giocatoreId}`).checked;
+    const nome = document.getElementById(`nome-${giocatoreId}`).value.trim();
+    const riotId = document.getElementById(`riot-${giocatoreId}`).value.trim();
+
+    if (!nome) {
+        showAlert('Il nickname del giocatore non puo essere vuoto.', 'error');
+        return;
+    }
     
     const updates = {
-        punti: Math.max(0, punti),
+        nome,
+        riotId,
+        punti,
         posizione: Math.max(0, posizione),
         qualificato: qualificato
     };
@@ -812,10 +834,34 @@ function salvaModificheGiocatore(giocatoreId) {
     database.ref(`tornei/${torneoSelezionatoId}/giocatori/${giocatoreId}`).update(updates)
         .then(() => {
             showAlert('Modifiche salvate con successo!');
+            caricaGiocatoriTorneo(torneoSelezionatoId);
         })
         .catch(error => {
             console.error("Errore nel salvataggio delle modifiche:", error);
             showAlert(`Errore nel salvataggio delle modifiche: ${error.message}`, 'error');
+        });
+}
+
+function applicaPenalitaAssenza(giocatoreId) {
+    if (!torneoSelezionatoId) {
+        showAlert('Nessun torneo selezionato!', 'error');
+        return;
+    }
+
+    if (!confirm('Applicare la penalita di -20 punti per assenza?')) return;
+
+    database.ref(`tornei/${torneoSelezionatoId}/giocatori/${giocatoreId}`).update({
+        punti: -20,
+        posizione: 0,
+        noShow: true
+    })
+        .then(() => {
+            showAlert('Penalita applicata.');
+            caricaGiocatoriTorneo(torneoSelezionatoId);
+        })
+        .catch(error => {
+            console.error("Errore nell applicazione della penalita:", error);
+            showAlert(`Errore penalita: ${error.message}`, 'error');
         });
 }
 
