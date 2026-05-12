@@ -143,9 +143,32 @@ function renderAutomaticLobbies(torneo, iscrizioni) {
         return '';
     }
 
-    const lobbies = [];
-    for (let index = 0; index < participants.length; index += 8) {
-        lobbies.push(participants.slice(index, index + 8));
+    const participantByKey = new Map(participants.map(participant => [participant.key, participant]));
+    const managedLobbies = Object.entries(torneo.rounds?.['signup-lobbies']?.lobbies || {})
+        .sort((a, b) => (a[1].createdAt || '').localeCompare(b[1].createdAt || ''))
+        .map(([id, lobby], index) => ({
+            id,
+            name: lobby.name || `Lobby ${String.fromCharCode(65 + index)}`,
+            players: Object.keys(lobby.playerIds || {})
+                .map(playerId => {
+                    const signupPlayer = lobby.signupPlayers?.[playerId];
+                    const knownParticipant = participantByKey.get(playerId);
+                    const playerName = knownParticipant?.name || signupPlayer?.nickname || signupPlayer?.displayName || 'Giocatore registrato';
+                    return knownParticipant || { key: playerId, name: playerName };
+                })
+                .filter(player => participantByKey.has(player.key))
+        }))
+        .filter(lobby => lobby.players.length > 0);
+
+    const lobbies = managedLobbies.length ? managedLobbies : [];
+    if (lobbies.length === 0) {
+        for (let index = 0; index < participants.length; index += 8) {
+            lobbies.push({
+                id: `auto-${index / 8}`,
+                name: `Lobby ${String.fromCharCode(65 + (index / 8))}`,
+                players: participants.slice(index, index + 8)
+            });
+        }
     }
 
     return `
@@ -155,11 +178,11 @@ function renderAutomaticLobbies(torneo, iscrizioni) {
                 ${lobbies.map((lobby, index) => `
                     <section class="auto-lobby">
                         <div class="auto-lobby-title">
-                            <span>Lobby ${String.fromCharCode(65 + index)}</span>
-                            <small>${lobby.length}/8</small>
+                            <span>${html(lobby.name || `Lobby ${String.fromCharCode(65 + index)}`)}</span>
+                            <small>${lobby.players.length}/8</small>
                         </div>
                         <ol>
-                            ${lobby.map(player => `<li>${html(player.name)}</li>`).join('')}
+                            ${lobby.players.map(player => `<li>${html(player.name)}</li>`).join('')}
                         </ol>
                     </section>
                 `).join('')}

@@ -290,7 +290,7 @@
             throw new Error('Le iscrizioni si chiudono il giorno prima dell evento.');
         }
 
-        await database.ref(`iscrizioni/${torneoId}/${user.uid}`).set({
+        const signupData = {
             firstName: profile.firstName || '',
             lastName: profile.lastName || '',
             nickname: profile.nickname || profile.displayName || fallbackNickname(user),
@@ -299,7 +299,55 @@
             email: user.email || '',
             status: 'confirmed',
             createdAt: new Date().toISOString()
+        };
+
+        await database.ref(`iscrizioni/${torneoId}/${user.uid}`).set(signupData);
+        await ensureSignupLobby(torneoId, user.uid, signupData).catch(error => {
+            console.warn('Lobby iscritti non aggiornata automaticamente:', error);
         });
+    }
+
+    async function ensureSignupLobby(torneoId, userId, signupData) {
+        const roundRef = database.ref(`tornei/${torneoId}/rounds/signup-lobbies`);
+        const roundSnapshot = await roundRef.once('value');
+        const round = roundSnapshot.val() || {};
+        const lobbies = round.lobbies || {};
+        const updates = {};
+
+        if (!round.name) updates.name = 'Lobby iscritti';
+        if (!round.createdAt) updates.createdAt = new Date().toISOString();
+        updates.type = 'signup';
+
+        Object.entries(lobbies).forEach(([lobbyId, lobby]) => {
+            if (lobby?.playerIds?.[userId]) {
+                updates[`lobbies/${lobbyId}/playerIds/${userId}`] = null;
+                updates[`lobbies/${lobbyId}/results/${userId}`] = null;
+            }
+        });
+
+        const availableLobby = Object.entries(lobbies)
+            .sort((a, b) => (a[1].createdAt || '').localeCompare(b[1].createdAt || ''))
+            .find(([, lobby]) => Object.keys(lobby.playerIds || {}).length < 8);
+
+        let nextLobbyNumber = Object.keys(lobbies).length + 1;
+        while (lobbies[`lobby-${nextLobbyNumber}`]) nextLobbyNumber += 1;
+        const lobbyId = availableLobby ? availableLobby[0] : `lobby-${nextLobbyNumber}`;
+        if (!availableLobby) {
+            updates[`lobbies/${lobbyId}/name`] = `Lobby ${String.fromCharCode(64 + nextLobbyNumber)}`;
+            updates[`lobbies/${lobbyId}/createdAt`] = new Date().toISOString();
+        }
+
+        updates[`lobbies/${lobbyId}/playerIds/${userId}`] = true;
+        updates[`lobbies/${lobbyId}/results/${userId}/position`] = '';
+        updates[`lobbies/${lobbyId}/results/${userId}/points`] = 0;
+        updates[`lobbies/${lobbyId}/signupPlayers/${userId}`] = {
+            nickname: signupData.nickname,
+            displayName: signupData.displayName,
+            riotId: signupData.riotId,
+            createdAt: signupData.createdAt
+        };
+
+        await roundRef.update(updates);
     }
 
     function isRegistrationDeadlineOpen(torneo) {
@@ -322,7 +370,28 @@
         if (!hasDatabase()) {
             throw new Error('Database non disponibile.');
         }
-        await database.ref(`iscrizioni/${torneoId}/${auth.currentUser.uid}`).remove();
+        const userId = auth.currentUser.uid;
+        await database.ref(`iscrizioni/${torneoId}/${userId}`).remove();
+        await removeFromSignupLobbies(torneoId, userId).catch(error => {
+            console.warn('Lobby iscritti non aggiornata dopo disiscrizione:', error);
+        });
+    }
+
+    async function removeFromSignupLobbies(torneoId, userId) {
+        const lobbiesRef = database.ref(`tornei/${torneoId}/rounds/signup-lobbies/lobbies`);
+        const snapshot = await lobbiesRef.once('value');
+        const lobbies = snapshot.val() || {};
+        const updates = {};
+
+        Object.keys(lobbies).forEach(lobbyId => {
+            updates[`${lobbyId}/playerIds/${userId}`] = null;
+            updates[`${lobbyId}/results/${userId}`] = null;
+            updates[`${lobbyId}/signupPlayers/${userId}`] = null;
+        });
+
+        if (Object.keys(updates).length > 0) {
+            await lobbiesRef.update(updates);
+        }
     }
 
     window.UserAuth = {

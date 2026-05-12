@@ -20,7 +20,7 @@
         .admin-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
         .admin-panel { background: #2d1b4d; border: 1px solid rgba(243, 206, 52, 0.3); border-radius: 8px; padding: 20px; }
         .toolbar { display: grid; grid-template-columns: minmax(220px, 1fr) minmax(180px, auto) auto; gap: 10px; align-items: center; }
-        .round-tools { display: grid; grid-template-columns: minmax(180px, 1fr) minmax(180px, 1fr) repeat(3, auto); gap: 10px; align-items: center; margin-bottom: 14px; }
+        .round-tools { display: grid; grid-template-columns: minmax(180px, 1fr) minmax(180px, 1fr) repeat(4, auto); gap: 10px; align-items: center; margin-bottom: 14px; }
         .lobby-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px; }
         .lobby-card { background: rgba(0, 0, 0, 0.26); border: 1px solid rgba(243, 206, 52, 0.24); border-radius: 8px; padding: 14px; display: grid; gap: 12px; }
         .lobby-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
@@ -76,6 +76,7 @@
                 <input type="text" id="roundEditName" placeholder="Nome round selezionato">
                 <button id="renameRoundButton" type="button"><i class="fas fa-pen"></i> Salva nome</button>
                 <button id="deleteRoundButton" type="button" class="danger"><i class="fas fa-trash"></i> Elimina round</button>
+                <button id="syncSignupLobbiesButton" type="button" class="secondary"><i class="fas fa-users-gear"></i> Sincronizza iscritti</button>
                 <button id="publishTotalsButton" type="button" class="secondary"><i class="fas fa-ranking-star"></i> Aggiorna punti torneo</button>
             </div>
             <div class="toolbar" style="grid-template-columns:minmax(220px, 1fr) auto;">
@@ -102,7 +103,10 @@
         let currentTournamentId = '';
         let currentRoundId = '';
         let currentPlayers = {};
+        let currentSignups = {};
         let currentRounds = {};
+        let tournamentRef = null;
+        let signupsRef = null;
 
         function playerName(player) {
             return player.nome || player.nickname || player.displayName || 'Giocatore';
@@ -110,6 +114,39 @@
 
         function playerMeta(player) {
             return player.riotId ? `Riot ID: ${player.riotId}` : 'Riot ID non presente';
+        }
+
+        function mergedPlayers(torneo, signups) {
+            const players = {};
+
+            Object.entries(signups || {}).forEach(([uid, signup]) => {
+                players[uid] = {
+                    ...signup,
+                    id: uid,
+                    source: 'signup',
+                    nome: signup.nickname || signup.displayName || signup.nome || signup.email || 'Giocatore registrato'
+                };
+            });
+
+            Object.entries(torneo.giocatori || {}).forEach(([playerId, player]) => {
+                players[playerId] = {
+                    ...player,
+                    id: playerId,
+                    source: 'player'
+                };
+
+                if (player.userId) {
+                    players[player.userId] = {
+                        ...players[player.userId],
+                        ...player,
+                        id: player.userId,
+                        tournamentPlayerId: playerId,
+                        source: 'player'
+                    };
+                }
+            });
+
+            return players;
         }
 
         function lobbyPlayerIds(lobby) {
@@ -160,9 +197,13 @@
         }
 
         function loadTournament(id) {
+            if (tournamentRef) tournamentRef.off();
+            if (signupsRef) signupsRef.off();
+
             currentTournamentId = id;
             currentRoundId = '';
             currentPlayers = {};
+            currentSignups = {};
             currentRounds = {};
             document.getElementById('lobbyGrid').innerHTML = '';
             document.getElementById('roundPanel').style.display = id ? 'block' : 'none';
@@ -171,12 +212,26 @@
                 return;
             }
 
-            database.ref(`tornei/${id}`).on('value', snapshot => {
-                const torneo = snapshot.val() || {};
-                currentPlayers = torneo.giocatori || {};
-                currentRounds = torneo.rounds || {};
+            let currentTournament = {};
+
+            function renderCurrentTournament() {
+                currentPlayers = mergedPlayers(currentTournament, currentSignups);
+                currentRounds = currentTournament.rounds || {};
                 renderRoundSelect();
                 renderLobbies();
+            }
+
+            tournamentRef = database.ref(`tornei/${id}`);
+            signupsRef = database.ref(`iscrizioni/${id}`);
+
+            tournamentRef.on('value', snapshot => {
+                currentTournament = snapshot.val() || {};
+                renderCurrentTournament();
+            });
+
+            signupsRef.on('value', snapshot => {
+                currentSignups = snapshot.val() || {};
+                renderCurrentTournament();
             });
         }
 
@@ -354,11 +409,22 @@
             const select = document.querySelector(`[data-player-select="${lobbyId}"]`);
             const playerId = select?.value;
             if (!playerId) return;
-            database.ref(`tornei/${currentTournamentId}/rounds/${currentRoundId}/lobbies/${lobbyId}`).update({
+            const player = currentPlayers[playerId] || {};
+            const updates = {
                 [`playerIds/${playerId}`]: true,
                 [`results/${playerId}/position`]: '',
                 [`results/${playerId}/points`]: 0
-            })
+            };
+            if (currentRoundId === 'signup-lobbies' && player.source === 'signup') {
+                updates[`signupPlayers/${playerId}`] = {
+                    nickname: player.nickname || player.nome || player.displayName || 'Giocatore registrato',
+                    displayName: player.displayName || '',
+                    riotId: player.riotId || '',
+                    createdAt: player.createdAt || ''
+                };
+            }
+
+            database.ref(`tornei/${currentTournamentId}/rounds/${currentRoundId}/lobbies/${lobbyId}`).update(updates)
                 .catch(error => setStatus(`Errore assegnazione giocatore: ${error.message}`));
         }
 
@@ -382,6 +448,77 @@
             if (!confirm('Eliminare questa lobby?')) return;
             database.ref(`tornei/${currentTournamentId}/rounds/${currentRoundId}/lobbies/${lobbyId}`).remove()
                 .catch(error => setStatus(`Errore eliminazione lobby: ${error.message}`));
+        }
+
+        function syncSignupLobbies() {
+            if (!currentTournamentId) return setStatus('Seleziona prima un torneo.');
+
+            const signupEntries = Object.entries(currentSignups || {})
+                .sort((a, b) => (a[1].createdAt || '').localeCompare(b[1].createdAt || '') || playerName(a[1]).localeCompare(playerName(b[1]), 'it'));
+
+            if (signupEntries.length === 0) return setStatus('Non ci sono iscritti da sincronizzare.');
+
+            const round = currentRounds['signup-lobbies'] || {};
+            const lobbies = round.lobbies || {};
+            const updates = {
+                name: 'Lobby iscritti',
+                type: 'signup',
+                createdAt: round.createdAt || new Date().toISOString()
+            };
+            const assignedIds = new Set();
+            const lobbyEntries = Object.entries(lobbies)
+                .sort((a, b) => (a[1].createdAt || '').localeCompare(b[1].createdAt || ''));
+
+            lobbyEntries.forEach(([lobbyId, lobby]) => {
+                Object.keys(lobby.playerIds || {}).forEach(playerId => {
+                    if (!currentSignups[playerId]) {
+                        updates[`lobbies/${lobbyId}/playerIds/${playerId}`] = null;
+                        updates[`lobbies/${lobbyId}/results/${playerId}`] = null;
+                        updates[`lobbies/${lobbyId}/signupPlayers/${playerId}`] = null;
+                        return;
+                    }
+                    assignedIds.add(playerId);
+                });
+            });
+
+            signupEntries
+                .filter(([uid]) => !assignedIds.has(uid))
+                .forEach(([uid, signup]) => {
+                    let target = lobbyEntries.find(([, lobby]) => Object.keys(lobby.playerIds || {}).filter(playerId => currentSignups[playerId]).length < 8);
+                    if (!target) {
+                        let nextNumber = lobbyEntries.length + 1;
+                        while (lobbies[`lobby-${nextNumber}`]) nextNumber += 1;
+                        const lobbyId = `lobby-${nextNumber}`;
+                        const lobby = {
+                            name: `Lobby ${String.fromCharCode(64 + nextNumber)}`,
+                            playerIds: {},
+                            createdAt: new Date().toISOString()
+                        };
+                        lobbyEntries.push([lobbyId, lobby]);
+                        target = [lobbyId, lobby];
+                        updates[`lobbies/${lobbyId}/name`] = lobby.name;
+                        updates[`lobbies/${lobbyId}/createdAt`] = lobby.createdAt;
+                    }
+
+                    const [lobbyId, lobby] = target;
+                    lobby.playerIds = { ...(lobby.playerIds || {}), [uid]: true };
+                    updates[`lobbies/${lobbyId}/playerIds/${uid}`] = true;
+                    updates[`lobbies/${lobbyId}/results/${uid}/position`] = '';
+                    updates[`lobbies/${lobbyId}/results/${uid}/points`] = 0;
+                    updates[`lobbies/${lobbyId}/signupPlayers/${uid}`] = {
+                        nickname: signup.nickname || signup.displayName || signup.nome || signup.email || 'Giocatore registrato',
+                        displayName: signup.displayName || '',
+                        riotId: signup.riotId || '',
+                        createdAt: signup.createdAt || ''
+                    };
+                });
+
+            database.ref(`tornei/${currentTournamentId}/rounds/signup-lobbies`).update(updates)
+                .then(() => {
+                    currentRoundId = 'signup-lobbies';
+                    setStatus('Lobby iscritti sincronizzate.');
+                })
+                .catch(error => setStatus(`Errore sincronizzazione lobby: ${error.message}`));
         }
 
         function publishTournamentTotals() {
@@ -422,6 +559,7 @@
             document.getElementById('createRoundButton').addEventListener('click', createRound);
             document.getElementById('renameRoundButton').addEventListener('click', renameRound);
             document.getElementById('deleteRoundButton').addEventListener('click', deleteRound);
+            document.getElementById('syncSignupLobbiesButton').addEventListener('click', syncSignupLobbies);
             document.getElementById('publishTotalsButton').addEventListener('click', publishTournamentTotals);
             document.getElementById('createLobbyButton').addEventListener('click', createLobby);
             document.getElementById('lobbyGrid').addEventListener('click', event => {
